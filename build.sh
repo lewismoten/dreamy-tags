@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PLUGIN_DIR="dreamy-tag"
+PLUGIN_DIR="dreamy-tags"
 MAIN_FILE="$PLUGIN_DIR/$PLUGIN_DIR.php"
 BUILD_DIR="dist_temp"
 VERSION_FILE="version.txt"
