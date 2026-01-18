@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Dreamy Tag Cloud Filter
+ * Plugin Name: Dreamy Tags
  * Description: Generates a tag cloud filtered by category and specific tags, with exclusion logic.
  * Version: 1.0.1
  * Author: Lewis Moten
@@ -8,21 +8,18 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class Dreamy_Tag_Cloud_Widget extends WP_Widget {
+class Dreamy_Tags_Widget extends WP_Widget {
 
     public function __construct() {
         parent::__construct(
-            'dreamy_tag_cloud_widget',
-            'Dreamy Tag Cloud Filter',
+            'dreamy_tags_widget',
+            'Dreamy Tags',
             array( 'description' => 'A tag cloud filtered by categories and tags.' )
         );
     }
 
     public function widget( $args, $instance ) {
         echo $args['before_widget'];
-        if ( ! empty( $instance['title'] ) ) {
-            echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ) . $args['after_title'];
-        }
 
         // 1. Get all post IDs that match the category filter
         $post_args = array(

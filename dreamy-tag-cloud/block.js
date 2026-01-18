@@ -5,7 +5,6 @@
   blockEditor: { InspectorControls, useBlockProps },
   components: {
     PanelBody,
-    TextControl,
     ToggleControl,
     ComboboxControl,
     Button
@@ -250,12 +249,6 @@
           el(
             PanelBody,
             { title: "Dreamy Tags Settings", initialOpen: true },
-
-            el(TextControl, {
-              label: "Title",
-              value: attrs.title || "",
-              onChange: (v) => props.setAttributes({ title: v })
-            }),
 
             // Categories picker
             el(ComboboxControl, {

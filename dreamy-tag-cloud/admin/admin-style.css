@@ -13,7 +13,7 @@
     display: none !important;
 }
 
-.widget_dreamy_tag_cloud_widget .tagcloud a {
+.widget_dreamy_tags_widget .tagcloud a {
     display: inline-block;
     margin: 4px;
     padding: 6px 12px;
@@ -31,14 +31,14 @@
   cursor: default;
   text-decoration: underline;
 }
-.widget_dreamy_tag_cloud_widget .tagcloud a:hover {
+.widget_dreamy_tags_widget .tagcloud a:hover {
     background: #a5d6a7;
     color: #ffffff !important;
     box-shadow: 0 0 15px rgba(165, 214, 167, 0.6);
     transform: translateY(-2px);
 }
 
-.widget_dreamy_tag_cloud_widget .tagcloud a {
+.widget_dreamy_tags_widget .tagcloud a {
     line-height: 1.2;
 }
 .editor-styles-wrapper .dreamy-tag-cloud-block {

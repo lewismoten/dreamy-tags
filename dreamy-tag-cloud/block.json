@@ -12,7 +12,6 @@
     "editorStyle": "file:./admin/admin-style.css",
     "editorScript": "file:./block.js",
     "attributes": {
-        "title": { "type": "string", "default": "" },
         "cat": { "type": "array", "default": [] },
         "tags": { "type": "array", "default": [] },
         "auto_exclude": { "type": "boolean", "default": true },        

@@ -17,17 +17,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 // Include the widget class
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-dreamy-widget.php';
 
-function register_lewismoten_tag_cloud_widget() {
-    register_widget( 'Dreamy_Tag_Cloud_Widget' );
+function register_lewismoten_dreamy_tags_widget() {
+    register_widget( 'Dreamy_Tags_Widget' );
 }
-add_action( 'widgets_init', 'register_lewismoten_tag_cloud_widget' );
+add_action( 'widgets_init', 'register_lewismoten_dreamy_tags_widget' );
 
-function lewismoten_tag_cloud_shortcode($atts) {
+function lewismoten_dreamy_tags_shortcode($atts) {
     $a = shortcode_atts(array(
         'cat' => '',
         'tags' =>  '',
         'exclude'  => '',
-        'title'    => '',
         'auto_exclude' => true
     ), $atts);
 
@@ -41,9 +40,8 @@ function lewismoten_tag_cloud_shortcode($atts) {
     }
 
     ob_start();
-    if(class_exists('Dreamy_Tag_Cloud_Widget')) {
-        the_widget('Dreamy_Tag_Cloud_Widget', array(
-            'title'               => $a['title'],
+    if(class_exists('Dreamy_Tags_Widget')) {
+        the_widget('Dreamy_Tags_Widget', array(
             'filter_category_ids' => $cat_array,
             'filter_tag_ids'      => $tag_array,
             'exclude_tag_ids'     => $exclude_array,
@@ -52,18 +50,9 @@ function lewismoten_tag_cloud_shortcode($atts) {
     }
     return ob_get_clean();
 }
-add_shortcode('dreamy_tag_cloud', 'lewismoten_tag_cloud_shortcode');
+add_shortcode('dreamy_tags', 'lewismoten_dreamy_tags_shortcode');
 
 function lewismoten_flat_ids(&$a, $key) {
-    $raw = $key.'_raw';
-    if ( isset( $a[ $raw ] ) 
-        && is_string( $a[ $raw ] ) 
-        && trim( $a[ $raw ] ) !== '' 
-    ) {
-        $a[ $key ] = $a[ $raw ];
-        return;
-    }
-
     if ( isset( $a[ $key ] ) && is_array( $a[ $key ] ) ) {
         $a[ $key ] = implode(
             ',',
@@ -79,26 +68,26 @@ function lewismoten_flat_ids(&$a, $key) {
 
     $a[ $key ] = isset( $a[ $key ] ) ? (string) $a[ $key ] : '';
 }
-function lewismoten_tag_cloud_block_render( $attributes, $content = '', $block = null ) {
+function lewismoten_dreamy_tags_block_render( $attributes, $content = '', $block = null ) {
     $attributes = is_array( $attributes ) ? $attributes : array();
     lewismoten_flat_ids($attributes, 'cat');
     lewismoten_flat_ids($attributes, 'tags');
     lewismoten_flat_ids($attributes, 'exclude');
 
-    $html = lewismoten_tag_cloud_shortcode( $attributes );
+    $html = lewismoten_dreamy_tags_shortcode( $attributes );
     if ( is_admin() ) {
         $html = preg_replace('/\s+href=("|\').*?\1/i', '', $html);
     }
     return $html;
 }
-function register_lewismoten_tag_cloud_block() {
+function register_lewismoten_dreamy_tags_block() {
     register_block_type( __DIR__, array(
-        'render_callback' => 'lewismoten_tag_cloud_block_render',
+        'render_callback' => 'lewismoten_dreamy_tags_block_render',
     ) );
 }
-add_action( 'init', 'register_lewismoten_tag_cloud_block' );
+add_action( 'init', 'register_lewismoten_dreamy_tags_block' );
 
-function lewismoten_tag_cloud_styles() {
+function lewismoten_dreamy_tags_styles() {
     echo '<style>
         .tagcloud a { 
             display: inline-block; margin: 4px; padding: 6px 12px;
@@ -112,16 +101,16 @@ function lewismoten_tag_cloud_styles() {
         }
     </style>';
 }
-add_action('wp_head', 'lewismoten_tag_cloud_styles');
+add_action('wp_head', 'lewismoten_dreamy_tags_styles');
 
-function lewismoten_tag_cloud_assets() {
+function lewismoten_dreamy_tags_assets() {
     $plugin_data = get_plugin_data( __FILE__ );
     $version = $plugin_data['Version'];
     wp_enqueue_style(
-        'dreamy-tag-cloud-admin-style',
+        'dreamy-tags-admin-style',
         plugins_url( 'admin/admin-style.css', __FILE__ ),
         array(),
         $version
     );
 }
-add_action( 'enqueue_block_editor_assets', 'lewismoten_tag_cloud_assets' );
+add_action( 'enqueue_block_editor_assets', 'lewismoten_dreamy_tags_assets' );
