@@ -22,6 +22,8 @@ class Dreamy_Tags_Widget extends WP_Widget {
         echo $args['before_widget'];
 
         $no_tags_found = 'No matching tags found.';
+        $min_font = 8;
+        $max_font = 22;
 
         $min_count = isset( $instance['min_count'] ) ? max( 1, intval( $instance['min_count'] ) ) : 1;
 
@@ -58,49 +60,43 @@ class Dreamy_Tags_Widget extends WP_Widget {
         }
 
         // 2. Collect tags used by these specific posts (and apply min_count within this subset)
-        if ( $min_count > 1 ) {
-            $tag_counts = array();
+        $tag_counts = array();
 
-            foreach ( $filtered_post_ids as $pid ) {
-                $tag_ids = wp_get_post_terms( $pid, 'post_tag', array( 'fields' => 'ids' ) );
-                if ( empty( $tag_ids ) || is_wp_error( $tag_ids ) ) {
+        foreach ( $filtered_post_ids as $pid ) {
+            $tag_ids = wp_get_post_terms( $pid, 'post_tag', array( 'fields' => 'ids' ) );
+            if ( empty( $tag_ids ) || is_wp_error( $tag_ids ) ) {
+                continue;
+            }
+
+            foreach ( $tag_ids as $tid ) {
+                $tid = intval( $tid );
+                if ( in_array( $tid, $exclude_tag_ids, true ) ) {
                     continue;
                 }
-
-                foreach ( $tag_ids as $tid ) {
-                    $tid = intval( $tid );
-                    if ( in_array( $tid, $exclude_tag_ids, true ) ) {
-                        continue;
-                    }
-                    $tag_counts[ $tid ] = ( $tag_counts[ $tid ] ?? 0 ) + 1;
-                }
+                $tag_counts[ $tid ] = ( $tag_counts[ $tid ] ?? 0 ) + 1;
             }
-
-            $kept_tag_ids = array_keys(
-                array_filter(
-                    $tag_counts,
-                    static function ( $c ) use ( $min_count ) {
-                        return intval( $c ) >= $min_count;
-                    }
-                )
-            );
-
-            if ( empty( $kept_tag_ids ) ) {
-                echo "<p>$no_tags_found</p>";
-                echo $args['after_widget'];
-                return;
-            }
-
-            $tags_in_use = get_terms( array(
-                'taxonomy'   => 'post_tag',
-                'include'    => $kept_tag_ids,
-                'hide_empty' => false,
-            ) );
-
-        } else {
-            // min_count = 1, so any tag that appears at least once in the subset is allowed
-            $tags_in_use = wp_get_object_terms( $filtered_post_ids, 'post_tag' );
         }
+
+        $kept_tag_ids = array_keys(
+            array_filter(
+                $tag_counts,
+                static function ( $c ) use ( $min_count ) {
+                    return intval( $c ) >= $min_count;
+                }
+            )
+        );
+
+        if ( empty( $kept_tag_ids ) ) {
+            echo "<p>$no_tags_found</p>";
+            echo $args['after_widget'];
+            return;
+        }
+
+        $tags_in_use = get_terms( array(
+            'taxonomy'   => 'post_tag',
+            'include'    => $kept_tag_ids,
+            'hide_empty' => false,
+        ) );
 
         if ( empty( $tags_in_use ) || is_wp_error( $tags_in_use ) ) {
             echo "<p>$no_tags_found</p>";
@@ -114,16 +110,75 @@ class Dreamy_Tags_Widget extends WP_Widget {
         $final_tag_ids = array_diff( array_map( 'intval', $tag_ids_to_show ), $exclude_tag_ids );
 
         if ( ! empty( $final_tag_ids ) ) {
-            wp_tag_cloud( array(
+            $this->dreamy_tags_cloud( array(
                 'include'  => $final_tag_ids,
                 'taxonomy' => 'post_tag',
                 'format'   => 'flat',
+                'min_font' => $min_font,
+                'max_font' => $max_font,
+                'no_tags_found' => $no_tags_found,
+                'tag_counts' => $tag_counts
             ) );
         } else {
             echo "<p>$no_tags_found</p>";
         }
 
         echo $args['after_widget'];
+    }
+
+    public function dreamy_tags_cloud($a) {
+        $min_font = $a['min_font'];
+        $max_font = $a['max_font'];
+        $no_tags_found = $a['no_tags_found'];
+
+        $subset_counts = array_intersect_key($a['tag_counts'], array_flip($a['include']));
+        if (empty($subset_counts)) {
+            echo "<p>$no_tags_found</p>";
+            return;
+        }
+
+        $min_c = min($subset_counts);
+        $max_c = max($subset_counts);
+
+        // Avoid divide-by-zero when all counts are the same
+        $spread = max(1, $max_c - $min_c);
+
+        $terms = get_terms([
+            'taxonomy' => $a['taxonomy'],
+            'include' => $a['include'],
+            'hide_empty' => false,
+        ]);
+        if (empty($terms) || is_wp_error($terms)) {
+            echo "<p>$no_tags_found</p>";
+            return;
+        }
+
+        // Sort by name so output is stable
+        usort($terms, static function($x, $y) {
+            return strcasecmp($x->name, $y->name);
+        });
+
+        echo '<div class="dreamy-tags-cloud">';
+        foreach ($terms as $term) {
+            $tid = (int) $term->term_id;
+            $c = (int) ($subset_counts[$tid] ?? 0);
+            if ($c <= 0) continue;
+
+            // Linear scaling based on subset count
+            $ratio = ($c - $min_c) / $spread; // 0..1
+            $size = $min_font + ($ratio * ($max_font - $min_font));
+
+            printf(
+                '<a href="%s" class="dreamy-tags-link-%d" style="font-size: %.2fpt" aria-label="%s (%d)">%s</a> ',
+                esc_url(get_term_link($term)),
+                $tid,
+                $size,
+                esc_attr($term->name),
+                $c,
+                esc_html($term->name)
+            );
+        }
+        echo '</div>';
     }
 
     public function form( $instance ) {

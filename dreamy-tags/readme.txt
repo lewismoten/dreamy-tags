@@ -15,6 +15,11 @@ A specialized tag cloud generator designed for archives. It allows you to filter
 3. Add the "Dreamy Tags" widget to your sidebar via Appearance > Widgets or the Site Editor.
 
 == Changelog ==
+= 1.0.31 =
+* add minimum tag threshold
+* show tag size relative to subset of posts matching
+* rename plugin to Dreamy Tags
+
 = 1.0.26 =
 * tags and filters can be searched by name in block editor settings
 
