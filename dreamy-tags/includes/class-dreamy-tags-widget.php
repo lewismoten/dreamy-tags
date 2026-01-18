@@ -21,70 +21,145 @@ class Dreamy_Tags_Widget extends WP_Widget {
     public function widget( $args, $instance ) {
         echo $args['before_widget'];
 
-        // 1. Get all post IDs that match the category filter
+        $no_tags_found = 'No matching tags found.';
+
+        $min_count = isset( $instance['min_count'] ) ? max( 1, intval( $instance['min_count'] ) ) : 1;
+
+        // 3. Handle Exclusions (define this BEFORE any counting)
+        $exclude_tag_ids = ! empty( $instance['exclude_tag_ids'] ) ? array_map( 'intval', (array) $instance['exclude_tag_ids'] ) : array();
+
+        // If the "Exclude filtered tags" checkbox is checked, add those to the exclusion list
+        if ( ! empty( $instance['auto_exclude_filter'] ) && ! empty( $instance['filter_tag_ids'] ) ) {
+            $exclude_tag_ids = array_unique( array_merge( $exclude_tag_ids, array_map( 'intval', (array) $instance['filter_tag_ids'] ) ) );
+        }
+
+        // 1. Get all post IDs that match the filters
         $post_args = array(
             'posts_per_page' => -1,
             'fields'         => 'ids',
+            'post_type'      => 'post',
+            'no_found_rows'  => true,
         );
 
         if ( ! empty( $instance['filter_category_ids'] ) ) {
-            $post_args['category__in'] = $instance['filter_category_ids'];
+            $post_args['category__in'] = array_map( 'intval', (array) $instance['filter_category_ids'] );
         }
 
         if ( ! empty( $instance['filter_tag_ids'] ) ) {
-            $post_args['tag__in'] = $instance['filter_tag_ids'];
+            $post_args['tag__in'] = array_map( 'intval', (array) $instance['filter_tag_ids'] );
         }
 
         $filtered_post_ids = get_posts( $post_args );
 
-        // 2. Collect all tags used by these specific posts
-        $tags_in_use = wp_get_object_terms( $filtered_post_ids, 'post_tag' );
-        $tag_ids_to_show = wp_list_pluck( $tags_in_use, 'term_id' );
-
-        // 3. Handle Exclusions
-        $exclude_tag_ids = ! empty( $instance['exclude_tag_ids'] ) ? $instance['exclude_tag_ids'] : array();
-        
-        // If the "Exclude filtered tags" checkbox is checked, add those to the exclusion list
-        if ( isset( $instance['auto_exclude_filter'] ) && $instance['auto_exclude_filter'] && ! empty( $instance['filter_tag_ids'] ) ) {
-            $exclude_tag_ids = array_unique( array_merge( $exclude_tag_ids, $instance['filter_tag_ids'] ) );
+        if ( empty( $filtered_post_ids ) ) {
+            echo "<p>$no_tags_found</p>";
+            echo $args['after_widget'];
+            return;
         }
 
+        // 2. Collect tags used by these specific posts (and apply min_count within this subset)
+        if ( $min_count > 1 ) {
+            $tag_counts = array();
+
+            foreach ( $filtered_post_ids as $pid ) {
+                $tag_ids = wp_get_post_terms( $pid, 'post_tag', array( 'fields' => 'ids' ) );
+                if ( empty( $tag_ids ) || is_wp_error( $tag_ids ) ) {
+                    continue;
+                }
+
+                foreach ( $tag_ids as $tid ) {
+                    $tid = intval( $tid );
+                    if ( in_array( $tid, $exclude_tag_ids, true ) ) {
+                        continue;
+                    }
+                    $tag_counts[ $tid ] = ( $tag_counts[ $tid ] ?? 0 ) + 1;
+                }
+            }
+
+            $kept_tag_ids = array_keys(
+                array_filter(
+                    $tag_counts,
+                    static function ( $c ) use ( $min_count ) {
+                        return intval( $c ) >= $min_count;
+                    }
+                )
+            );
+
+            if ( empty( $kept_tag_ids ) ) {
+                echo "<p>$no_tags_found</p>";
+                echo $args['after_widget'];
+                return;
+            }
+
+            $tags_in_use = get_terms( array(
+                'taxonomy'   => 'post_tag',
+                'include'    => $kept_tag_ids,
+                'hide_empty' => false,
+            ) );
+
+        } else {
+            // min_count = 1, so any tag that appears at least once in the subset is allowed
+            $tags_in_use = wp_get_object_terms( $filtered_post_ids, 'post_tag' );
+        }
+
+        if ( empty( $tags_in_use ) || is_wp_error( $tags_in_use ) ) {
+            echo "<p>$no_tags_found</p>";
+            echo $args['after_widget'];
+            return;
+        }
+
+        $tag_ids_to_show = wp_list_pluck( $tags_in_use, 'term_id' );
+
         // Final Filter: Remove excluded IDs from our "To Show" list
-        $final_tag_ids = array_diff( $tag_ids_to_show, $exclude_tag_ids );
+        $final_tag_ids = array_diff( array_map( 'intval', $tag_ids_to_show ), $exclude_tag_ids );
 
         if ( ! empty( $final_tag_ids ) ) {
             wp_tag_cloud( array(
-                'include' => $final_tag_ids,
+                'include'  => $final_tag_ids,
                 'taxonomy' => 'post_tag',
-                'format'   => 'flat'
+                'format'   => 'flat',
             ) );
         } else {
-            echo '<p>No matching dream symbols found.</p>';
+            echo "<p>$no_tags_found</p>";
         }
 
         echo $args['after_widget'];
     }
 
     public function form( $instance ) {
-        $title = ! empty( $instance['title'] ) ? $instance['title'] : 'Dream Symbols';
-        $cat_ids = ! empty( $instance['filter_category_ids'] ) ? $instance['filter_category_ids'] : array();
-        $filter_tags = ! empty( $instance['filter_tag_ids'] ) ? $instance['filter_tag_ids'] : array();
-        $exclude_tag_ids = ! empty( $instance['exclude_tag_ids'] ) ? $instance['exclude_tag_ids'] : array();
-        $auto_exclude = isset( $instance['auto_exclude_filter'] ) ? (bool) $instance['auto_exclude_filter'] : true;
+        $min_count     = isset( $instance['min_count'] ) ? max( 1, intval( $instance['min_count'] ) ) : 1;
 
+        $cat_ids       = ! empty( $instance['filter_category_ids'] ) ? (array) $instance['filter_category_ids'] : array();
+        $filter_tags   = ! empty( $instance['filter_tag_ids'] ) ? (array) $instance['filter_tag_ids'] : array();
+        $exclude_tag_ids = ! empty( $instance['exclude_tag_ids'] ) ? (array) $instance['exclude_tag_ids'] : array();
+
+        $auto_exclude  = isset( $instance['auto_exclude_filter'] ) ? (bool) $instance['auto_exclude_filter'] : true;
         ?>
+
         <p>
-            <label for="<?php echo $this->get_field_id( 'title' ); ?>">Title:</label>
-            <input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
+            <label for="<?php echo esc_attr( $this->get_field_id( 'min_count' ) ); ?>">Minimum posts per tag:</label>
+            <input class="widefat"
+                   id="<?php echo esc_attr( $this->get_field_id( 'min_count' ) ); ?>"
+                   name="<?php echo esc_attr( $this->get_field_name( 'min_count' ) ); ?>"
+                   type="number"
+                   min="1"
+                   step="1"
+                   value="<?php echo esc_attr( $min_count ); ?>">
+            <small>Only show tags that appear in at least this many matching posts.</small>
         </p>
 
         <p>
             <label>Filter by Categories (Hold Ctrl to select multiple):</label><br>
-            <select name="<?php echo $this->get_field_name( 'filter_category_ids' ); ?>[]" multiple class="widefat" style="height:100px;">
+            <select name="<?php echo esc_attr( $this->get_field_name( 'filter_category_ids' ) ); ?>[]" multiple class="widefat" style="height:100px;">
                 <?php
-                $categories = get_categories();
+                $categories = get_categories( array( 'hide_empty' => false ) );
                 foreach ( $categories as $cat ) {
-                    echo '<option value="' . $cat->term_id . '" ' . ( in_array( $cat->term_id, $cat_ids ) ? 'selected' : '' ) . '>' . $cat->name . '</option>';
+                    printf(
+                        '<option value="%d" %s>%s</option>',
+                        intval( $cat->term_id ),
+                        selected( in_array( $cat->term_id, $cat_ids, true ), true, false ),
+                        esc_html( $cat->name )
+                    );
                 }
                 ?>
             </select>
@@ -92,38 +167,71 @@ class Dreamy_Tags_Widget extends WP_Widget {
 
         <p>
             <label>Filter by Tags (Optional):</label><br>
-            <select name="<?php echo $this->get_field_name( 'filter_tag_ids' ); ?>[]" multiple class="widefat" style="height:100px;">
+            <select name="<?php echo esc_attr( $this->get_field_name( 'filter_tag_ids' ) ); ?>[]" multiple class="widefat" style="height:100px;">
                 <?php
-                $tags = get_tags();
+                $tags = get_tags( array( 'hide_empty' => false ) );
                 foreach ( $tags as $tag ) {
-                    echo '<option value="' . $tag->term_id . '" ' . ( in_array( $tag->term_id, $filter_tags ) ? 'selected' : '' ) . '>' . $tag->name . '</option>';
+                    printf(
+                        '<option value="%d" %s>%s</option>',
+                        intval( $tag->term_id ),
+                        selected( in_array( $tag->term_id, $filter_tags, true ), true, false ),
+                        esc_html( $tag->name )
+                    );
                 }
                 ?>
             </select>
         </p>
 
         <p>
-            <input class="checkbox" type="checkbox" <?php checked( $auto_exclude ); ?> id="<?php echo $this->get_field_id( 'auto_exclude_filter' ); ?>" name="<?php echo $this->get_field_name( 'auto_exclude_filter' ); ?>" />
-            <label for="<?php echo $this->get_field_id( 'auto_exclude_filter' ); ?>">Exclude Filtered Tags from Cloud</label>
+            <input class="checkbox"
+                   type="checkbox"
+                   <?php checked( $auto_exclude ); ?>
+                   id="<?php echo esc_attr( $this->get_field_id( 'auto_exclude_filter' ) ); ?>"
+                   name="<?php echo esc_attr( $this->get_field_name( 'auto_exclude_filter' ) ); ?>" />
+            <label for="<?php echo esc_attr( $this->get_field_id( 'auto_exclude_filter' ) ); ?>">Exclude Filtered Tags from Cloud</label>
         </p>
 
         <p>
             <label>Manual Tag Exclusions (Tag IDs, comma separated):</label>
-            <input class="widefat" id="<?php echo $this->get_field_id( 'exclude_tag_ids_str' ); ?>" name="<?php echo $this->get_field_name( 'exclude_tag_ids_str' ); ?>" type="text" value="<?php echo implode(',', $exclude_tag_ids); ?>">
+            <input class="widefat"
+                   id="<?php echo esc_attr( $this->get_field_id( 'exclude_tag_ids_str' ) ); ?>"
+                   name="<?php echo esc_attr( $this->get_field_name( 'exclude_tag_ids_str' ) ); ?>"
+                   type="text"
+                   value="<?php echo esc_attr( implode( ',', array_map( 'intval', $exclude_tag_ids ) ) ); ?>">
         </p>
         <?php
     }
 
     public function update( $new_instance, $old_instance ) {
         $instance = array();
-        $instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
-        $instance['filter_category_ids'] = ( ! empty( $new_instance['filter_category_ids'] ) ) ? array_map( 'intval', $new_instance['filter_category_ids'] ) : array();
-        $instance['filter_tag_ids'] = ( ! empty( $new_instance['filter_tag_ids'] ) ) ? array_map( 'intval', $new_instance['filter_tag_ids'] ) : array();
-        $instance['auto_exclude_filter'] = isset( $new_instance['auto_exclude_filter'] ) ? (bool) $new_instance['auto_exclude_filter'] : true;
-        
+
+        $instance['min_count'] = isset( $new_instance['min_count'] )
+            ? max( 1, intval( $new_instance['min_count'] ) )
+            : 1;
+
+        $instance['filter_category_ids'] = ( ! empty( $new_instance['filter_category_ids'] ) )
+            ? array_map( 'intval', (array) $new_instance['filter_category_ids'] )
+            : array();
+
+        $instance['filter_tag_ids'] = ( ! empty( $new_instance['filter_tag_ids'] ) )
+            ? array_map( 'intval', (array) $new_instance['filter_tag_ids'] )
+            : array();
+
+        $instance['auto_exclude_filter'] = isset( $new_instance['auto_exclude_filter'] )
+            ? (bool) $new_instance['auto_exclude_filter']
+            : true;
+
         // Convert comma string to array
         if ( ! empty( $new_instance['exclude_tag_ids_str'] ) ) {
-            $instance['exclude_tag_ids'] = array_map( 'intval', explode( ',', $new_instance['exclude_tag_ids_str'] ) );
+            $instance['exclude_tag_ids'] = array_values(
+                array_filter(
+                    array_map(
+                        'intval',
+                        explode( ',', $new_instance['exclude_tag_ids_str'] )
+                    ),
+                    static fn( $v ) => $v > 0
+                )
+            );
         } else {
             $instance['exclude_tag_ids'] = array();
         }

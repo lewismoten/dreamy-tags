@@ -15,7 +15,8 @@
         "cat": { "type": "array", "default": [] },
         "tags": { "type": "array", "default": [] },
         "auto_exclude": { "type": "boolean", "default": true },        
-        "exclude": { "type": "array", "default": [] }
+        "exclude": { "type": "array", "default": [] },
+        "min_count": { "type": "number", "default": 1 }
     },
     "supports": {
         "html": false,

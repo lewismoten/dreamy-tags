@@ -8,14 +8,15 @@ The Dreamy Tags plug-in will allow you to display a tag cloud that filters based
 
 # Short Code
 
-`[dreamy_tags cat="786439348" tags="786439775" exclude="786439762,786439759" auto_exclude="true"]`
+`[dreamy_tags cat="786439348" tags="786439775" exclude="786439762,786439759" auto_exclude="true" min_count="5"]`
 
 All arguments are optional. `cat`, `tags`, and `exclude` are comma-delimited.
 
 * cat - the category id's that posts must have at least one
 * tags - the tag id's that a post must have at least one
 * exclude - tag id's that should be excluded from the cloud
-* auto_exclude (optional, boolean [true]) - indicates filtered tags should be excluded from the cloud
+* auto_exclude (boolean [true]) - indicates filtered tags should be excluded from the cloud
+* min_count - (number [1]) - Minimum number of occurences tag must appear on a post filtered by cat & tags.
 
 # Code Blocks
 
@@ -27,6 +28,7 @@ The code block settings map to the short code.
 * Filter Tags - A post must have one of these tags
 * Exclude Tags - The following tags will not appear in the cloud
 * auto-exclude filtered tags - The filter tags will not appear in the cloud
+* Minimum posts per tag - A tag must appear this many times in the filtered posts before it appears
 
 ## Build
 1. Open Terminal.

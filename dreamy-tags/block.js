@@ -7,7 +7,8 @@
     PanelBody,
     ToggleControl,
     ComboboxControl,
-    Button
+    Button,
+    RangeControl,
   },
   data: { useSelect },
   coreData: { store: coreStore }
@@ -266,28 +267,28 @@
               { style: chipWrapStyle },
               selectedCatIds.length
                 ? selectedCatIds.map((id) => {
-                    const label = catNameById[id] || `Category #${id}`;
-                    return el(
-                      "span",
-                      { key: id, style: chipStyle },
-                      el("span", { style: chipLabelStyle, title: label }, label),
-                      el(
-                        Button,
-                        {
-                          isSmall: true,
-                          isDestructive: true,
-                          type: "button",
-                          style: chipXStyle,
-                          onClick: (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            removeCat(id);
-                          }
-                        },
-                        deleteIcon
-                      )
-                    );
-                  })
+                  const label = catNameById[id] || `Category #${id}`;
+                  return el(
+                    "span",
+                    { key: id, style: chipStyle },
+                    el("span", { style: chipLabelStyle, title: label }, label),
+                    el(
+                      Button,
+                      {
+                        isSmall: true,
+                        isDestructive: true,
+                        type: "button",
+                        style: chipXStyle,
+                        onClick: (e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          removeCat(id);
+                        }
+                      },
+                      deleteIcon
+                    )
+                  );
+                })
                 : el("span", { style: { opacity: 0.7 } }, "No categories selected yet.")
             ),
 
@@ -307,28 +308,28 @@
               { style: chipWrapStyle },
               selectedTagIds.length
                 ? selectedTagIds.map((id) => {
-                    const label = tagNameById[id] || `Tag #${id}`;
-                    return el(
-                      "span",
-                      { key: id, style: chipStyle },
-                      el("span", { style: chipLabelStyle, title: label }, label),
-                      el(
-                        Button,
-                        {
-                          isSmall: true,
-                          isDestructive: true,
-                          type: "button",
-                          style: chipXStyle,
-                          onClick: (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            removeTag(id);
-                          }
-                        },
-                        deleteIcon
-                      )
-                    );
-                  })
+                  const label = tagNameById[id] || `Tag #${id}`;
+                  return el(
+                    "span",
+                    { key: id, style: chipStyle },
+                    el("span", { style: chipLabelStyle, title: label }, label),
+                    el(
+                      Button,
+                      {
+                        isSmall: true,
+                        isDestructive: true,
+                        type: "button",
+                        style: chipXStyle,
+                        onClick: (e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          removeTag(id);
+                        }
+                      },
+                      deleteIcon
+                    )
+                  );
+                })
                 : el("span", { style: { opacity: 0.7 } }, "No filter tags selected yet.")
             ),
 
@@ -354,30 +355,39 @@
               { style: chipWrapStyle },
               excludeTagIds.length
                 ? excludeTagIds.map((id) => {
-                    const label = excludeNameById[id] || `Tag #${id}`;
-                    return el(
-                      "span",
-                      { key: id, style: chipStyle },
-                      el("span", { style: chipLabelStyle, title: label }, label),
-                      el(
-                        Button,
-                        {
-                          isSmall: true,
-                          isDestructive: true,
-                          type: "button",
-                          style: chipXStyle,
-                          onClick: (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            removeExcludeTag(id);
-                          }
-                        },
-                        deleteIcon
-                      )
-                    );
-                  })
+                  const label = excludeNameById[id] || `Tag #${id}`;
+                  return el(
+                    "span",
+                    { key: id, style: chipStyle },
+                    el("span", { style: chipLabelStyle, title: label }, label),
+                    el(
+                      Button,
+                      {
+                        isSmall: true,
+                        isDestructive: true,
+                        type: "button",
+                        style: chipXStyle,
+                        onClick: (e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          removeExcludeTag(id);
+                        }
+                      },
+                      deleteIcon
+                    )
+                  );
+                })
                 : el("span", { style: { opacity: 0.7 } }, "No excluded tags yet.")
-            )
+            ),
+            // Minimum posts per tag
+            el(RangeControl, {
+              label: "Minimum posts per tag",
+              help: "Only show tags used on at least this many matching posts.",
+              min: 1,
+              max: 50,
+              value: Number.isFinite(attrs.min_count) ? attrs.min_count : 1,
+              onChange: (v) => props.setAttributes({ min_count: v || 1 })
+            })
           )
         ),
 

@@ -27,12 +27,15 @@ function lewismoten_dreamy_tags_shortcode($atts) {
         'cat' => '',
         'tags' =>  '',
         'exclude'  => '',
-        'auto_exclude' => true
+        'auto_exclude' => true,
+        'min_count' => 1,
     ), $atts);
 
     $cat_array = !empty($a['cat']) ? array_map('intval', explode(',', $a['cat'])) : array();
     $tag_array = !empty($a['tags']) ? array_map('intval', explode(',', $a['tags'])) : array();
     $exclude_array = !empty($a['exclude']) ? array_map('intval', explode(',', $a['exclude'])) : array();
+    
+    $a['min_count'] = isset($a['min_count']) ? max(1, intval($a['min_count'])) : 1;
 
     $a['auto_exclude'] = filter_var( $a['auto_exclude'], FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE );
     if ( $a['auto_exclude'] === null ) {
@@ -45,7 +48,8 @@ function lewismoten_dreamy_tags_shortcode($atts) {
             'filter_category_ids' => $cat_array,
             'filter_tag_ids'      => $tag_array,
             'exclude_tag_ids'     => $exclude_array,
-            'auto_exclude_filter' => $a['auto_exclude']
+            'auto_exclude_filter' => $a['auto_exclude'],
+            'min_count' => $a['min_count'],
         ));
     }
     return ob_get_clean();
