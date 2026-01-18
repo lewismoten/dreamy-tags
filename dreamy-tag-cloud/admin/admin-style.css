@@ -26,7 +26,11 @@
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     text-transform: capitalize;
 }
-
+.wp-block-lewismoten-dreamy-tag-cloud a {
+  pointer-events: none;
+  cursor: default;
+  text-decoration: underline;
+}
 .widget_dreamy_tag_cloud_widget .tagcloud a:hover {
     background: #a5d6a7;
     color: #ffffff !important;
@@ -37,10 +41,11 @@
 .widget_dreamy_tag_cloud_widget .tagcloud a {
     line-height: 1.2;
 }
-.wp-block-lewismoten-dreamy-tag-cloud a {
+.editor-styles-wrapper .dreamy-tag-cloud-block a,
+.editor-styles-wrapper .dreamy-tag-cloud-block * {
   pointer-events: none;
-  cursor: default;
 }
-.wp-block-lewismoten-dreamy-tag-cloud a {
-  text-decoration: underline;
+.editor-styles-wrapper .dreamy-tag-cloud-block {
+  padding: 8px;
+  min-height: 32px;
 }

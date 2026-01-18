@@ -1,35 +1,41 @@
-(function (blocks, element, components, blockEditor, serverSideRender) {
+(({
+    serverSideRender,
+    blocks: {
+      registerBlockType
+    },
+    element: {
+      createElement: el
+    },
+    blockEditor: {
+      InspectorControls, 
+      useBlockProps
+    },
+    components: {
+      PanelBody,
+      TextControl,
+      TextareaControl,
+      ToggleControl
+    }
+  }) => {
 
-  const { registerBlockType } = blocks;
-  const { createElement: el } = element;
-  const { InspectorControls, useBlockProps } = blockEditor;
-  const { PanelBody, TextControl, TextareaControl, ToggleControl } = components;
+  const pluginName = 'dreamy-tag-cloud';
+  const typeName = `lewismoten/${pluginName}`;
 
-  function toNumbers(value) {
-    return (value || "")
+  const toNumbers = value => (value || "")
       .split(",")
       .map(s => s.trim())
       .filter(s => !isNaN(s))
       .filter(Boolean)
       .map(s => parseInt(s, 10));
-  }
 
-
-  registerBlockType("lewismoten/dreamy-tag-cloud", {
+  registerBlockType(typeName, {
     edit:  (props) => {
       const attrs = props.attributes;
-      const blockProps = useBlockProps({ className: "dreamy-tag-cloud-editor" });
-
+      const blockProps = useBlockProps({ className: `${pluginName}-editor` });
       return [
-        el(
-          'div',
-          blockProps,
-          el(
-            InspectorControls,
-            { key: "inspector" },
-            el(
-              PanelBody,
-              { title: "Dreamy Tag Cloud Settings", initialOpen: true },
+        el('div', blockProps,
+          el(InspectorControls, { key: "inspector" },
+            el(PanelBody, { title: "Dreamy Tags Settings", initialOpen: true },
 
               el(TextControl, {
                 label: "Title",
@@ -52,27 +58,24 @@
                 onChange: (v) => props.setAttributes({ tags_raw: v }),
                 onBlur:  () => props.setAttributes({ tags : toNumbers(attrs.tags_raw)})
               }),
-
+              el(ToggleControl, {
+                label: "Auto-exclude filtered",
+                checked: !!attrs.exclude,
+                onChange: (v) => props.setAttributes({ exclude: v }),
+              }),
               el(TextareaControl, {
                 label: "Exclude Tags",
                 value: attrs.exclude_raw || '',
                 onChange: (v) => props.setAttributes({ exclude_raw: v }),
                 onBlur: () => props.setAttributes({ exclude: toNumbers(attrs.exclude_raw) }),
-              }),
-
-              el(ToggleControl, {
-                label: "Auto-exclude filtered tags",
-                checked: !!attrs.exclude,
-                onChange: (v) => props.setAttributes({ exclude: v }),
               })
             )
           )
-        )
-        ,
+        ),
 
         el(serverSideRender, {
           key: "preview",
-          block: "lewismoten/dreamy-tag-cloud",
+          block: typeName,
           attributes: attrs,
         }),
       ];
@@ -80,10 +83,4 @@
 
     save: () => null
   });
-})(
-  window.wp.blocks,
-  window.wp.element,
-  window.wp.components,
-  window.wp.blockEditor,
-  window.wp.serverSideRender
-);
+})(window.wp);
