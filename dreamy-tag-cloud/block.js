@@ -17,6 +17,7 @@
 
   const pluginName = 'dreamy-tag-cloud';
   const typeName = `lewismoten/${pluginName}`;
+  const deleteIcon = "×";
 
   const asNumber = (value) => {
     const n = Number(value);
@@ -216,7 +217,7 @@
                             removeTag(id);
                           }
                         },
-                        "×"
+                        deleteIcon
                       )
                     );
                   })
@@ -264,20 +265,13 @@
                             removeExcludeTag(id);
                           }
                         },
-                        "×"
+                        deleteIcon
                       )
                     );
                   })
                 )
                 : el("div", { style: { opacity: 0.7 } }, "No excluded tags yet.")
             ),
-
-            el(TextareaControl, {
-              label: "Exclude Tags (IDs) — legacy",
-              value: attrs.exclude_raw || "",
-              onChange: (v) => props.setAttributes({ exclude_raw: v }),
-              onBlur: () => props.setAttributes({ exclude: toNumbers(attrs.exclude_raw) })
-            })
           )
         ),
 

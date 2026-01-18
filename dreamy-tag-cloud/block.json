@@ -19,9 +19,7 @@
         "tags": { "type": "array", "default": [] },
         "exclude": { "type": "array", "default": [] },
 
-        "cat_raw": { "type": "string", "default": "" },
-        "tags_raw": { "type": "string", "default": "" },
-        "exclude_raw": { "type": "string", "default": "" }
+        "cat_raw": { "type": "string", "default": "" }
 
     },
     "supports": {
