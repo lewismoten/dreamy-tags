@@ -23,13 +23,39 @@
     return Number.isFinite(n) ? n : null;
   };
 
-  const toNumbers = (value) => (value || "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean)
-    .map((s) => Number(s))
-    .filter((n) => Number.isFinite(n))
-    .map((n) => parseInt(n, 10));
+  // Small “chip” UI helpers (inline, wrap, compact)
+  const chipWrapStyle = {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "6px",
+    marginTop: "8px"
+  };
+
+  const chipStyle = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    padding: "2px 8px",
+    borderRadius: "999px",
+    border: "1px solid rgba(0,0,0,0.15)",
+    background: "rgba(0,0,0,0.04)",
+    fontSize: "12px",
+    lineHeight: "20px"
+  };
+
+  const chipLabelStyle = {
+    whiteSpace: "nowrap",
+    maxWidth: "220px",
+    overflow: "hidden",
+    textOverflow: "ellipsis"
+  };
+
+  const chipXStyle = {
+    minWidth: "auto",
+    padding: "0 6px",
+    height: "20px",
+    lineHeight: "18px"
+  };
 
   registerBlockType(typeName, {
     edit: (props) => {
@@ -40,6 +66,9 @@
       const [tagSearch, setTagSearch] = useState("");
       const [excludeSearch, setExcludeSearch] = useState("");
 
+      // -------------------------
+      // Categories
+      // -------------------------
       const allCats = useSelect(
         (select) =>
           select(coreStore).getEntityRecords("taxonomy", "category", {
@@ -92,6 +121,9 @@
         props.setAttributes({ cat: selectedCatIds.filter((c) => c !== idNum) });
       };
 
+      // -------------------------
+      // Filter Tags (include)
+      // -------------------------
       const allTags = useSelect(
         (select) =>
           select(coreStore).getEntityRecords("taxonomy", "post_tag", {
@@ -113,38 +145,9 @@
         ? attrs.tags.map(asNumber).filter((n) => n !== null)
         : [];
 
-      const selectedTags = useSelect(
-        (select) => {
-          if (!selectedTagIds.length) return [];
-          return select(coreStore).getEntityRecords("taxonomy", "post_tag", {
-            include: selectedTagIds,
-            per_page: selectedTagIds.length,
-            hide_empty: false
-          });
-        },
-        [selectedTagIds.join(",")]
-      );
-
-      const tagNameById = {};
-      (selectedTags || []).forEach((t) => {
-        tagNameById[t.id] = t.name;
-      });
-
-      const addTag = (id) => {
-        const idNum = asNumber(id);
-        if (!idNum) return;
-        if (excludeTagIds.includes(idNum)) return;
-        if (!selectedTagIds.includes(idNum)) {
-          props.setAttributes({ tags: [...selectedTagIds, idNum] });
-        }
-      };
-
-      const removeTag = (id) => {
-        const idNum = asNumber(id);
-        if (!idNum) return;
-        props.setAttributes({ tags: selectedTagIds.filter((t) => t !== idNum) });
-      };
-
+      // -------------------------
+      // Exclude Tags
+      // -------------------------
       const excludeAllTags = useSelect(
         (select) =>
           select(coreStore).getEntityRecords("taxonomy", "post_tag", {
@@ -166,6 +169,25 @@
         ? attrs.exclude.map(asNumber).filter((n) => n !== null)
         : [];
 
+      // Fetch selected include tags by ID so names show on initial load
+      const selectedTags = useSelect(
+        (select) => {
+          if (!selectedTagIds.length) return [];
+          return select(coreStore).getEntityRecords("taxonomy", "post_tag", {
+            include: selectedTagIds,
+            per_page: selectedTagIds.length,
+            hide_empty: false
+          });
+        },
+        [selectedTagIds.join(",")]
+      );
+
+      const tagNameById = {};
+      (selectedTags || []).forEach((t) => {
+        tagNameById[t.id] = t.name;
+      });
+
+      // Fetch selected exclude tags by ID so names show on initial load
       const excludedTags = useSelect(
         (select) => {
           if (!excludeTagIds.length) return [];
@@ -183,9 +205,26 @@
         excludeNameById[t.id] = t.name;
       });
 
+      const addTag = (id) => {
+        const idNum = asNumber(id);
+        if (!idNum) return;
+        // Optional: prevent overlap with exclude list
+        if (excludeTagIds.includes(idNum)) return;
+        if (!selectedTagIds.includes(idNum)) {
+          props.setAttributes({ tags: [...selectedTagIds, idNum] });
+        }
+      };
+
+      const removeTag = (id) => {
+        const idNum = asNumber(id);
+        if (!idNum) return;
+        props.setAttributes({ tags: selectedTagIds.filter((t) => t !== idNum) });
+      };
+
       const addExcludeTag = (id) => {
         const idNum = asNumber(id);
         if (!idNum) return;
+        // Optional: prevent overlap with include list
         if (selectedTagIds.includes(idNum)) return;
         if (!excludeTagIds.includes(idNum)) {
           props.setAttributes({ exclude: [...excludeTagIds, idNum] });
@@ -198,6 +237,9 @@
         props.setAttributes({ exclude: excludeTagIds.filter((t) => t !== idNum) });
       };
 
+      // -------------------------
+      // UI
+      // -------------------------
       return el(
         "div",
         blockProps,
@@ -215,6 +257,7 @@
               onChange: (v) => props.setAttributes({ title: v })
             }),
 
+            // Categories picker
             el(ComboboxControl, {
               label: "Filter Categories",
               help: "Type to search categories, then click to add",
@@ -224,38 +267,38 @@
               onChange: (catId) => addCat(catId)
             }),
 
+            // Category chips (inline/wrapping)
             el(
               "div",
-              { style: { marginTop: "8px" } },
+              { style: chipWrapStyle },
               selectedCatIds.length
-                ? el(
-                    "ul",
-                    { style: { margin: 0, paddingLeft: "18px" } },
-                    selectedCatIds.map((id) => {
-                      const label = catNameById[id] || `Category #${id}`;
-                      return el(
-                        "li",
-                        { key: id, style: { display: "flex", gap: "8px", alignItems: "center" } },
-                        el("span", null, label),
-                        el(
-                          Button,
-                          {
-                            isDestructive: true,
-                            isSmall: true,
-                            type: "button",
-                            onClick: (e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              removeCat(id);
-                            }
-                          },
-                          deleteIcon
-                        )
-                      );
-                    })
-                  )
-                : el("div", { style: { opacity: 0.7 } }, "No categories selected yet.")
+                ? selectedCatIds.map((id) => {
+                    const label = catNameById[id] || `Category #${id}`;
+                    return el(
+                      "span",
+                      { key: id, style: chipStyle },
+                      el("span", { style: chipLabelStyle, title: label }, label),
+                      el(
+                        Button,
+                        {
+                          isSmall: true,
+                          isDestructive: true,
+                          type: "button",
+                          style: chipXStyle,
+                          onClick: (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            removeCat(id);
+                          }
+                        },
+                        deleteIcon
+                      )
+                    );
+                  })
+                : el("span", { style: { opacity: 0.7 } }, "No categories selected yet.")
             ),
+
+            // Filter Tags picker
             el(ComboboxControl, {
               label: "Filter Tags",
               help: "Type to search tags, then click to add",
@@ -265,37 +308,35 @@
               onChange: (tagId) => addTag(tagId)
             }),
 
+            // Filter tag chips
             el(
               "div",
-              { style: { marginTop: "8px" } },
+              { style: chipWrapStyle },
               selectedTagIds.length
-                ? el(
-                    "ul",
-                    { style: { margin: 0, paddingLeft: "18px" } },
-                    selectedTagIds.map((id) => {
-                      const label = tagNameById[id] || `Tag #${id}`;
-                      return el(
-                        "li",
-                        { key: id, style: { display: "flex", gap: "8px", alignItems: "center" } },
-                        el("span", null, label),
-                        el(
-                          Button,
-                          {
-                            isDestructive: true,
-                            isSmall: true,
-                            type: "button",
-                            onClick: (e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              removeTag(id);
-                            }
-                          },
-                          deleteIcon
-                        )
-                      );
-                    })
-                  )
-                : el("div", { style: { opacity: 0.7 } }, "No filter tags selected yet.")
+                ? selectedTagIds.map((id) => {
+                    const label = tagNameById[id] || `Tag #${id}`;
+                    return el(
+                      "span",
+                      { key: id, style: chipStyle },
+                      el("span", { style: chipLabelStyle, title: label }, label),
+                      el(
+                        Button,
+                        {
+                          isSmall: true,
+                          isDestructive: true,
+                          type: "button",
+                          style: chipXStyle,
+                          onClick: (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            removeTag(id);
+                          }
+                        },
+                        deleteIcon
+                      )
+                    );
+                  })
+                : el("span", { style: { opacity: 0.7 } }, "No filter tags selected yet.")
             ),
 
             el(ToggleControl, {
@@ -304,6 +345,7 @@
               onChange: (v) => props.setAttributes({ auto_exclude: v })
             }),
 
+            // Exclude Tags picker
             el(ComboboxControl, {
               label: "Exclude Tags",
               help: "Type to search tags, then click to exclude",
@@ -313,39 +355,36 @@
               onChange: (tagId) => addExcludeTag(tagId)
             }),
 
+            // Exclude tag chips
             el(
               "div",
-              { style: { marginTop: "8px" } },
+              { style: chipWrapStyle },
               excludeTagIds.length
-                ? el(
-                    "ul",
-                    { style: { margin: 0, paddingLeft: "18px" } },
-                    excludeTagIds.map((id) => {
-                      const label = excludeNameById[id] || `Tag #${id}`;
-                      return el(
-                        "li",
-                        { key: id, style: { display: "flex", gap: "8px", alignItems: "center" } },
-                        el("span", null, label),
-                        el(
-                          Button,
-                          {
-                            isDestructive: true,
-                            isSmall: true,
-                            type: "button",
-                            onClick: (e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              removeExcludeTag(id);
-                            }
-                          },
-                          deleteIcon
-                        )
-                      );
-                    })
-                  )
-                : el("div", { style: { opacity: 0.7 } }, "No excluded tags yet.")
-            ),
-
+                ? excludeTagIds.map((id) => {
+                    const label = excludeNameById[id] || `Tag #${id}`;
+                    return el(
+                      "span",
+                      { key: id, style: chipStyle },
+                      el("span", { style: chipLabelStyle, title: label }, label),
+                      el(
+                        Button,
+                        {
+                          isSmall: true,
+                          isDestructive: true,
+                          type: "button",
+                          style: chipXStyle,
+                          onClick: (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            removeExcludeTag(id);
+                          }
+                        },
+                        deleteIcon
+                      )
+                    );
+                  })
+                : el("span", { style: { opacity: 0.7 } }, "No excluded tags yet.")
+            )
           )
         ),
 
