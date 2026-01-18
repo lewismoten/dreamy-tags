@@ -59,6 +59,22 @@
         ? attrs.tags.map(asNumber).filter((n) => n !== null)
         : [];
 
+      const selectedTags = useSelect(
+        (select) => {
+          if (!selectedTagIds.length) return [];
+          return select(coreStore).getEntityRecords("taxonomy", "post_tag", {
+            include: selectedTagIds,
+            per_page: selectedTagIds.length,
+            hide_empty: false
+          });
+        },
+        [selectedTagIds.join(",")]
+      );
+      const selectedTagNameById = {};
+      (selectedTags || []).forEach((t) => {
+        selectedTagNameById[t.id] = t.name;
+      });
+
       const removeTag = (id) => {
         const idNum = asNumber(id);
         if (!idNum) return;
@@ -119,8 +135,7 @@
                   "ul",
                   { style: { margin: 0, paddingLeft: "18px" } },
                   selectedTagIds.map((id) => {
-                    const tagObj = (allTags || []).find((t) => t.id === id);
-                    const label = tagObj ? tagObj.name : `Tag #${id}`;
+                    const label = selectedTagNameById[id] || `Tag #${id}`;
                     return el(
                       "li",
                       { key: id, style: { display: "flex", gap: "8px", alignItems: "center" } },
