@@ -1,4 +1,5 @@
-.block-editor-block-types-list__item.editor-block-list-item-lewismoten-dreamy-tags .block-editor-block-icon,
+.block-editor-block-types-list__item.editor-block-list-item-lewismoten-dreamy-tags 
+.block-editor-block-icon,
 .block-editor-block-card__icon.lewismoten-dreamy-tags {
     background-image: url('../assets/icon-20x20.png');
     background-size: contain;
@@ -13,7 +14,7 @@
     display: none !important;
 }
 
-.widget_dreamy_tags_widget .tagcloud a {
+.widget_dreamy_tags_widget .dreamy-tags a {
     display: inline-block;
     margin: 4px;
     padding: 6px 12px;
@@ -31,14 +32,14 @@
   cursor: default;
   text-decoration: underline;
 }
-.widget_dreamy_tags_widget .tagcloud a:hover {
+.widget_dreamy_tags_widget .dreamy-tags a:hover {
     background: #a5d6a7;
     color: #ffffff !important;
     box-shadow: 0 0 15px rgba(165, 214, 167, 0.6);
     transform: translateY(-2px);
 }
 
-.widget_dreamy_tags_widget .tagcloud a {
+.widget_dreamy_tags_widget .dreamy-tags a {
     line-height: 1.2;
 }
 .editor-styles-wrapper .dreamy-tags-block {

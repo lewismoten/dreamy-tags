@@ -89,13 +89,13 @@ add_action( 'init', 'register_lewismoten_dreamy_tags_block' );
 
 function lewismoten_dreamy_tags_styles() {
     echo '<style>
-        .tagcloud a { 
+        .dreamy-tags a { 
             display: inline-block; margin: 4px; padding: 6px 12px;
             background: rgba(144, 238, 144, 0.1); color: #2e7d32 !important;
             border: 1px solid #a5d6a7; border-radius: 20px; text-decoration: none;
             transition: all 0.3s ease;
         }
-        .tagcloud a:hover { 
+        .dreamy-tags a:hover { 
             background: #a5d6a7; color: #fff !important;
             box-shadow: 0 0 15px rgba(165, 214, 167, 0.6); transform: translateY(-2px);
         }
