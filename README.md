@@ -37,7 +37,7 @@ Block settings map directly to the shortcode options:
 2. Navigate to your project folder
 3. Make the build script executable `chmod +x build.sh`
 4. Build the plugin `./build.sh --build-only`
-5. Upload the generated `dreamy-tags-v#.#.#.zip` to WordPress
+5. Upload the generated `dreamy-tags-v1.0.40.zip` to WordPress
 
 ### Version Bump
 During debelopment, it is encouraged to bump the version with each build and append the changelog. This is done by calling the build script with `-c` change tags. 

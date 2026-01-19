@@ -6,6 +6,8 @@ BUILD_DIR="dist_temp"
 VERSION_FILE="version.txt"
 CHANGELOG_FILE="CHANGELOG.md"
 README_FILE="$PLUGIN_DIR/readme.txt"
+README_MD="README.md"
+
 STABLE_RELEASE=false
 BUILD_ONLY=false
 
@@ -232,6 +234,7 @@ else
     sed -i '' "s/Version:           .*/Version:           $VERSION/" "$PLUGIN_DIR/$PLUGIN_DIR.php"
     sed -i '' "s/\* Version: .*/* Version: $VERSION/" "$PLUGIN_DIR/includes/class-$PLUGIN_DIR-widget.php"
     sed -i '' "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" "$PLUGIN_DIR/block.json"
+    sed -i '' -E "s/dreamy-tags-v[#0-9]+\.[#0-9]+\.[#0-9]+\.zip/dreamy-tags-v${VERSION}.zip/g" "$README_MD"
 fi
 
 
