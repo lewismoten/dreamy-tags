@@ -16,3 +16,6 @@
 ## 1.0.42 - 2026-01-19
 - Add block preview image
 
+## 1.0.43 - 2026-01-19
+- Fixed spelling and added semicolon
+

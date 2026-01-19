@@ -31,6 +31,9 @@ Initial WordPress.org release.
 
 == Changelog ==
 
+= 1.0.43 =
+* Fixed spelling and added semicolon
+
 = 1.0.42 =
 * Add block preview image
 

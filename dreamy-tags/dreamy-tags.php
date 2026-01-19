@@ -3,7 +3,7 @@
  * Plugin Name:       Dreamy Tags
  * Plugin URI:        https://github.com/lewismoten/dreamy-tags
  * Description:       Generates a tag cloud filtered by categories/tags with exclusion logic.
- * Version:           1.0.42
+ * Version:           1.0.43
  * Author:            Lewis Moten
  * Author URI:        https://lewismoten.com/
  * License:           GPLv2
@@ -115,8 +115,12 @@ function lewismoten_dreamy_tags_styles() {
 add_action('wp_head', 'lewismoten_dreamy_tags_styles');
 
 function lewismoten_dreamy_tags_assets() {
+    if ( ! function_exists( 'get_plugin_data' ) ) {
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    }
     $plugin_data = get_plugin_data( __FILE__ );
-    $version = $plugin_data['Version'];
+    $version = isset($plugin_data['Version']) ? $plugin_data['Version'] : null;
+    
     wp_enqueue_style(
         'dreamy-tags-admin-style',
         plugins_url( 'admin/admin-style.css', __FILE__ ),
@@ -125,7 +129,7 @@ function lewismoten_dreamy_tags_assets() {
     );
     wp_regsiter_script(
         'dreamy-tags-block-editor',
-        plugins_url('plock.js', __FILE__),
+        plugins_url('block.js', __FILE__),
         array(
             'wp-blocks',
             'wp-element',
@@ -137,7 +141,7 @@ function lewismoten_dreamy_tags_assets() {
         ),
         $version,
         true
-    )
+    );
     wp_localize_script(
         'dreamy-tags-block-editor',
         'DreamyTagsBlock',

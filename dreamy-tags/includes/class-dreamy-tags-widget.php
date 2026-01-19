@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Dreamy Tags
  * Description: Generates a tag cloud filtered by category and specific tags, with exclusion logic.
- * Version: 1.0.42
+ * Version: 1.0.43
  * Author: Lewis Moten
  */
 
