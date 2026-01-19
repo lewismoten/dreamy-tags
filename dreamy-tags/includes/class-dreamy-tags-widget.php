@@ -67,10 +67,12 @@ class Dreamy_Tags_Widget extends WP_Widget {
 
         // 1. Get all post IDs that match the filters
         $post_args = array(
-            'posts_per_page' => -1,
-            'fields'         => 'ids',
-            'post_type'      => 'post',
-            'no_found_rows'  => true,
+            'posts_per_page'         => 1000,
+            'fields'                 => 'ids',
+            'post_type'              => 'post',
+            'no_found_rows'          => true,
+            'update_post_meta_cache' => false,
+            'update_post_term_cache' => false
         );
 
         $tax_query = array();

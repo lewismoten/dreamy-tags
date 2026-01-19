@@ -19,7 +19,7 @@ All arguments are optional.
 * `cat` - Category IDs a post must belong to (at least one)
 * `children` - (boolean, default: true) - Include posts in child categories
 * `tags` - Tag IDs a post must belong to (at least one)
-* `exclude` - Tag IDs excluded from the cloud
+* `exclude_tags` - Tag IDs excluded from the cloud
 * `auto_exclude` (boolean, default: true) - Excludes filter tags from the cloud
 * `min_count` - (number, default: 2) - Minimum number of occurrences a tag must appear across the filtered posts
 

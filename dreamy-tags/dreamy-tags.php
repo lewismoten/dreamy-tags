@@ -28,14 +28,14 @@ function lewismoten_dreamy_tags_shortcode($atts) {
         'cat' => '',
         'children' => false,
         'tags' =>  '',
-        'exclude'  => '',
+        'exclude_tags'  => '',
         'auto_exclude' => true,
         'min_count' => 2,
     ), $atts);
 
     $cat_array = !empty($a['cat']) ? array_map('intval', explode(',', $a['cat'])) : array();
     $tag_array = !empty($a['tags']) ? array_map('intval', explode(',', $a['tags'])) : array();
-    $exclude_array = !empty($a['exclude']) ? array_map('intval', explode(',', $a['exclude'])) : array();
+    $exclude_tags_array = !empty($a['exclude_tags']) ? array_map('intval', explode(',', $a['exclude_tags'])) : array();
     
     $a['min_count'] = isset($a['min_count']) ? max(1, intval($a['min_count'])) : 2;
 
@@ -55,7 +55,7 @@ function lewismoten_dreamy_tags_shortcode($atts) {
             'filter_category_ids' => $cat_array,
             'children'            => $a['children'],
             'filter_tag_ids'      => $tag_array,
-            'exclude_tag_ids'     => $exclude_array,
+            'exclude_tag_ids'     => $exclude_tags_array,
             'auto_exclude_filter' => $a['auto_exclude'],
             'min_count'           => $a['min_count'],
         ));
@@ -84,7 +84,7 @@ function lewismoten_dreamy_tags_block_render( $attributes, $content = '', $block
     $attributes = is_array( $attributes ) ? $attributes : array();
     lewismoten_flat_ids($attributes, 'cat');
     lewismoten_flat_ids($attributes, 'tags');
-    lewismoten_flat_ids($attributes, 'exclude');
+    lewismoten_flat_ids($attributes, 'exclude_tags');
 
     $html = lewismoten_dreamy_tags_shortcode( $attributes );
     if ( is_admin() ) {

@@ -37,7 +37,7 @@
             "type": "boolean",
             "default": true
         },
-        "exclude": {
+        "exclude_tags": {
             "type": "array",
             "default": []
         },

@@ -177,8 +177,8 @@
         value: t.id
       }));
 
-      const excludeTagIds = Array.isArray(attrs.exclude)
-        ? attrs.exclude.map(asNumber).filter((n) => n !== null)
+      const excludeTagIds = Array.isArray(attrs.exclude_tags)
+        ? attrs.exclude_tags.map(asNumber).filter((n) => n !== null)
         : [];
 
       // Fetch selected include tags by ID so names show on initial load
@@ -239,14 +239,14 @@
         // Optional: prevent overlap with include list
         if (selectedTagIds.includes(idNum)) return;
         if (!excludeTagIds.includes(idNum)) {
-          props.setAttributes({ exclude: [...excludeTagIds, idNum] });
+          props.setAttributes({ exclude_tags: [...excludeTagIds, idNum] });
         }
       };
 
       const removeExcludeTag = (id) => {
         const idNum = asNumber(id);
         if (!idNum) return;
-        props.setAttributes({ exclude: excludeTagIds.filter((t) => t !== idNum) });
+        props.setAttributes({ exclude_tags: excludeTagIds.filter((t) => t !== idNum) });
       };
 
       // -------------------------
