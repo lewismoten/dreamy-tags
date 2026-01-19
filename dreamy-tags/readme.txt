@@ -4,7 +4,7 @@ Tags: tag cloud, taxonomy, categories, filter, widget
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.48
+Stable tag: 1.0.49
 License: GPLv2 or later
 
 Dreamy Tags displays a customizable tag cloud filtered by categories and tags for clean, meaningful blog and archive navigation.
@@ -39,12 +39,12 @@ All artwork and icons included with this plugin were created by the author and a
 
 == Upgrade Notice ==
 
-= 1.0.48 =
+= 1.0.49 =
 Initial WordPress.org release.
 
 == Changelog ==
 
-= 1.0.48 =
+= 1.0.49 =
 * Add explicit license disclosure for bundled artwork
 * Minimum occurrences defaults to 2
 * Add block preview image

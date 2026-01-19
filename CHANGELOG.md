@@ -31,3 +31,6 @@
 ## 1.0.48 - 2026-01-19
 - additional PHPCS report
 
+## 1.0.49 - 2026-01-19
+- address performance
+

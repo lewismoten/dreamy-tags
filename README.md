@@ -10,7 +10,7 @@ Dreamy Tags allows you to display a tag cloud filtered by categories and tags. I
 ## Shortcode
 
 ```text
-[dreamy_tags cat="786439348" children="true" tags="786439775" exclude="786439762,786439759" auto_exclude="true" min_count="5"]
+[dreamy_tags cat="786439348" children="true" tags="786439775" exclude_tags="786439762,786439759" auto_exclude="true" min_count="5"]
 ```
 
 All arguments are optional. 
