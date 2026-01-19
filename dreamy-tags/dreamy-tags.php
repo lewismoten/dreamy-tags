@@ -6,10 +6,10 @@
  * Version:           1.0.2
  * Author:            Lewis Moten
  * Author URI:        https://lewismoten.com/
- * License:           ISC
+ * License:           GPLv2
  * Text Domain:       dreamy-tags
- * Requires at least: 6.4
- * Requires PHP:      8.1
+ * Requires at least: 6.9
+ * Requires PHP:      8.3.30
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

@@ -1,10 +1,10 @@
 === Dreamy Tags ===
 Contributors: lewismoten
 Tags: tag cloud, cloud, filter, tags, categories, widget, taxonomy
-Requires at least: 6.0
-Tested up to: 6.4
+Requires at least: 6.9
+Tested up to: 6.9
 Stable tag: 1.0.26
-License: ISC or later
+License: GPLv2
 
 == Description ==
 A specialized tag cloud generator designed for archives. It allows you to filter tags based on specific categories while excluding the "organizational" tags from the cloud visual.
@@ -15,6 +15,11 @@ A specialized tag cloud generator designed for archives. It allows you to filter
 3. Add the "Dreamy Tags" widget to your sidebar via Appearance > Widgets or the Site Editor.
 
 == Changelog ==
+
+= 1.0.34 =
+* Changed license from ISC to GPLv2
+* Append change log via build script
+
 = 1.0.31 =
 * add minimum tag threshold
 * show tag size relative to subset of posts matching
