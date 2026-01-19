@@ -7,6 +7,7 @@ VERSION_FILE="version.txt"
 CHANGELOG_FILE="CHANGELOG.md"
 README_FILE="$PLUGIN_DIR/readme.txt"
 STABLE_RELEASE=false
+BUILD_ONLY=false
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -14,11 +15,19 @@ while [[ $# -gt 0 ]]; do
             STABLE_RELEASE=true
             shift
             ;;
+        --build-only|--no-bump)
+            BUILD_ONLY=true
+            shift
+            ;;
         *)
             break
             ;;
     esac
 done
+if [ "$BUILD_ONLY" = true ] && [ "$STABLE_RELEASE" = true ]; then
+  echo "Error: --build-only cannot be used with --stable"
+  exit 1
+fi
 
 if [ ! -f "$VERSION_FILE" ]; then
     echo "Error: version.txt not found!"
@@ -100,6 +109,9 @@ if [ "$STABLE_RELEASE" = true ]; then
 
   mv "$tmp" "$README_FILE"
 
+elif [ "$BUILD_ONLY" = true ]; then
+    VERSION="$CURRENT_VERSION"
+    echo "Build-only mode: using version $VERSION (no changes)"
 else
     BASE_VERSION=$(echo $CURRENT_VERSION | cut -d. -f1-2)
     PATCH_VERSION=$(echo $CURRENT_VERSION | cut -d. -f3)

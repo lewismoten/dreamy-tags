@@ -36,8 +36,19 @@ Block settings map directly to the shortcode options:
 1. Open Terminal.
 2. Navigate to your project folder
 3. Make the build script executable `chmod +x build.sh`
-4. Build the plugin `./build.sh -c "Building plugin myself"`
+4. Build the plugin `./build.sh --build-only`
 5. Upload the generated `dreamy-tags-v#.#.#.zip` to WordPress
+
+### Version Bump
+During debelopment, it is encouraged to bump the version with each build and append the changelog. This is done by calling the build script with `-c` change tags. 
+
+Multiple change tags can be defined. At least one change is required, and must be between 8-60 characters each.
+
+In turn, this will update `CHANGELOG.md` and `dreamy-tags/readme.txt` with the changes. The version's patch number will be incremented, and updated in `readme.txt`, `dreamy-tags.php`, `block.json`
+
+```bash
+./build.sh -c "Updated documentation" -c "Fixed spelling of 'occurences'"
+```
 
 ### Stable Build
 
