@@ -31,6 +31,9 @@ Initial WordPress.org release.
 
 == Changelog ==
 
+= 1.0.46 =
+* Include license
+
 = 1.0.45 =
 * Minimum occurrences defaults to 2
 

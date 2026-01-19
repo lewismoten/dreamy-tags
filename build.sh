@@ -251,6 +251,7 @@ find "$BUILD_DIR/$PLUGIN_DIR" -type f \( -name "*.php" -o -name "*.css" -o -name
     iconv -f UTF-8 -t UTF-8//IGNORE "$file" > "$temp_file"
     mv "$temp_file" "$file"
 done
+cp "LICENSE.md" "$BUILD_DIR"
 
 echo "Zipping distribution..."
 ZIP_NAME="${PLUGIN_DIR}-v${VERSION}.zip"

@@ -25,3 +25,6 @@
 ## 1.0.45 - 2026-01-19
 - Minimum occurrences defaults to 2
 
+## 1.0.46 - 2026-01-19
+- Include license
+
