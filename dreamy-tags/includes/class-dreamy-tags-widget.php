@@ -19,21 +19,51 @@ class Dreamy_Tags_Widget extends WP_Widget {
     }
 
     public function widget( $args, $instance ) {
-        echo $args['before_widget'];
+        echo wp_kses_post( $args['before_widget'] );
+        $this->actual_widget($instance);
+        echo wp_kses_post( $args['after_widget'] );
+    }
+
+    private function get_int_array($instance, $name): array {
+        return empty($instance[$name]) ? array() : array_map( 'intval', (array) $instance[$name] );
+    }
+    private function get_str_as_int_array($instance, $name): array {
+        if ( empty( $instance[$name] ) ) return array();
+        
+        return array_values(
+            array_filter(
+                array_map(
+                    'intval',
+                    explode( ',', (string)$instance[$name] )
+                ),
+                static fn( $v ) => $v > 0
+            )
+        );
+    }
+    private function get_bool($instance, $name, $default_value): bool {
+       return isset( $instance[ $name ] ) ? ! empty( $instance[ $name ] ) : (bool) $default_value;
+    }
+    private function get_int($instance, $name, $min, $default_value): int  {
+        if ( ! isset( $instance[ $name ] ) ) {
+            return (int) $default_value;
+        }
+        return max( (int) $min, (int) $instance[ $name ] );
+    }
+    private function actual_widget($instance) {
 
         $no_tags_found = 'No matching tags found.';
         $min_font = 8;
         $max_font = 22;
 
-        $min_count = isset( $instance['min_count'] ) ? max( 1, intval( $instance['min_count'] ) ) : 2;
-
-        // 3. Handle Exclusions (define this BEFORE any counting)
-        $exclude_tag_ids = ! empty( $instance['exclude_tag_ids'] ) ? array_map( 'intval', (array) $instance['exclude_tag_ids'] ) : array();
-
-        // If the "Exclude filtered tags" checkbox is checked, add those to the exclusion list
-        if ( ! empty( $instance['auto_exclude_filter'] ) && ! empty( $instance['filter_tag_ids'] ) ) {
-            $exclude_tag_ids = array_unique( array_merge( $exclude_tag_ids, array_map( 'intval', (array) $instance['filter_tag_ids'] ) ) );
+        $min_count = $this->get_int($instance, 'min_count', 1, 2);
+        $filter_category_ids = $this->get_int_array($instance, 'filter_category_ids');
+        $filter_tag_ids = $this->get_int_array($instance, 'filter_tag_ids');
+        $exclude_tag_ids = $this->get_int_array($instance, 'exclude_tag_ids');
+        $auto_exclude_filter = $this->get_bool($instance, 'auto_exclude_filter', true);
+        if ( $auto_exclude_filter && ! empty( $filter_tag_ids ) ) {
+            $exclude_tag_ids = array_unique( array_merge( $exclude_tag_ids, $filter_tag_ids ) );
         }
+        $children = $this->get_bool($instance, 'children', true);
 
         // 1. Get all post IDs that match the filters
         $post_args = array(
@@ -45,21 +75,21 @@ class Dreamy_Tags_Widget extends WP_Widget {
 
         $tax_query = array();
 
-        if ( ! empty( $instance['filter_category_ids'] ) ) {
+        if ( ! empty( $filter_category_ids ) ) {
             $tax_query[] = array(
                 'taxonomy'         => 'category',
                 'field'            => 'term_id',
-                'terms'            => array_map( 'intval', (array) $instance['filter_category_ids'] ),
-                'include_children' => ! empty( $instance['children'] ),
+                'terms'            => $filter_category_ids,
+                'include_children' => $children,
                 'operator'         => 'IN',
             );
         }
 
-        if ( ! empty( $instance['filter_tag_ids'] ) ) {
+        if ( ! empty( $filter_tag_ids ) ) {
             $tax_query[] = array(
                 'taxonomy' => 'post_tag',
                 'field'    => 'term_id',
-                'terms'    => array_map( 'intval', (array) $instance['filter_tag_ids'] ),
+                'terms'    => $filter_tag_ids,
                 'operator' => 'IN',
             );
         }
@@ -76,7 +106,6 @@ class Dreamy_Tags_Widget extends WP_Widget {
 
         if ( empty( $filtered_post_ids ) ) {
             $this->paragraph($no_tags_found);
-            echo $args['after_widget'];
             return;
         }
 
@@ -109,7 +138,6 @@ class Dreamy_Tags_Widget extends WP_Widget {
 
         if ( empty( $kept_tag_ids ) ) {
             $this->paragraph($no_tags_found);
-            echo $args['after_widget'];
             return;
         }
 
@@ -121,7 +149,6 @@ class Dreamy_Tags_Widget extends WP_Widget {
 
         if ( empty( $tags_in_use ) || is_wp_error( $tags_in_use ) ) {
             $this->paragraph($no_tags_found);
-            echo $args['after_widget'];
             return;
         }
 
@@ -144,7 +171,6 @@ class Dreamy_Tags_Widget extends WP_Widget {
             $this->paragraph($no_tags_found);
         }
 
-        echo $args['after_widget'];
     }
     private function paragraph($txt) {
         echo '<p>'.esc_html($txt).'</p>';
@@ -183,6 +209,12 @@ class Dreamy_Tags_Widget extends WP_Widget {
 
         echo '<div class="dreamy-tags-cloud">';
         foreach ($terms as $term) {
+
+            $term_url   = get_term_link( $term );
+            $term_url   = is_wp_error( $term_url ) ? '' : $term_url;
+
+            $name = $term->name;
+
             $tid = (int) $term->term_id;
             $c = (int) ($subset_counts[$tid] ?? 0);
             if ($c <= 0) continue;
@@ -191,28 +223,30 @@ class Dreamy_Tags_Widget extends WP_Widget {
             $ratio = ($c - $min_c) / $spread; // 0..1
             $size = $min_font + ($ratio * ($max_font - $min_font));
 
+            $tid_attr = (int) $tid;
+            $size_attr = (float) $size;
+            $count_attr = (int)$c;
+
             printf(
                 '<a href="%s" class="dreamy-tags-link-%d" style="font-size: %.2fpt" aria-label="%s (%d)">%s</a> ',
-                esc_url(get_term_link($term)),
-                $tid,
-                $size,
-                esc_attr($term->name),
-                $c,
-                esc_html($term->name)
+                esc_url($term_url),
+                $tid_attr,
+                $size_attr,
+                esc_attr($name),
+                $count_attr,
+                esc_html($name)
             );
         }
         echo '</div>';
     }
 
     public function form( $instance ) {
-        $min_count     = isset( $instance['min_count'] ) ? max( 1, intval( $instance['min_count'] ) ) : 1;
-
-        $cat_ids       = ! empty( $instance['filter_category_ids'] ) ? (array) $instance['filter_category_ids'] : array();
-        $filter_tags   = ! empty( $instance['filter_tag_ids'] ) ? (array) $instance['filter_tag_ids'] : array();
-        $exclude_tag_ids = ! empty( $instance['exclude_tag_ids'] ) ? (array) $instance['exclude_tag_ids'] : array();
-
-        $auto_exclude  = isset( $instance['auto_exclude_filter'] ) ? (bool) $instance['auto_exclude_filter'] : true;
-        $children  = isset( $instance['children'] ) ? (bool) $instance['children'] : true;
+        $min_count     = $this->get_int($instance, 'min_count', 1, 2);
+        $cat_ids = $this->get_int_array($instance, 'filter_category_ids');
+        $filter_tags = $this->get_int_array($instance, 'filter_tag_ids');
+        $exclude_tag_ids = $this->get_int_array($instance, 'exclude_tag_ids');
+        $auto_exclude = $this->get_bool($instance, 'auto_exclude_filter', true);
+        $children = $this->get_bool($instance, 'children', true);
         ?>
 
         <p>
@@ -292,41 +326,13 @@ class Dreamy_Tags_Widget extends WP_Widget {
 
     public function update( $new_instance, $old_instance ) {
         $instance = array();
-
-        $instance['min_count'] = isset( $new_instance['min_count'] )
-            ? max( 1, intval( $new_instance['min_count'] ) )
-            : 1;
-
-        $instance['filter_category_ids'] = ( ! empty( $new_instance['filter_category_ids'] ) )
-            ? array_map( 'intval', (array) $new_instance['filter_category_ids'] )
-            : array();
-
-        $instance['children'] = isset( $new_instance['children'] )
-            ? (bool) $new_instance['children']
-            : true;
-
-            $instance['filter_tag_ids'] = ( ! empty( $new_instance['filter_tag_ids'] ) )
-            ? array_map( 'intval', (array) $new_instance['filter_tag_ids'] )
-            : array();
-
-        $instance['auto_exclude_filter'] = isset( $new_instance['auto_exclude_filter'] )
-            ? (bool) $new_instance['auto_exclude_filter']
-            : true;
-
-        // Convert comma string to array
-        if ( ! empty( $new_instance['exclude_tag_ids_str'] ) ) {
-            $instance['exclude_tag_ids'] = array_values(
-                array_filter(
-                    array_map(
-                        'intval',
-                        explode( ',', $new_instance['exclude_tag_ids_str'] )
-                    ),
-                    static fn( $v ) => $v > 0
-                )
-            );
-        } else {
-            $instance['exclude_tag_ids'] = array();
-        }
+        
+        $instance['min_count'] = $this->get_int($new_instance, 'min_count', 1, 2);
+        $instance['filter_category_ids'] =  $this->get_int_array($new_instance, 'filter_category_ids');
+        $instance['children'] = $this->get_bool($new_instance, 'children', true);
+        $instance['filter_tag_ids'] = $this->get_int_array($new_instance, 'filter_tag_ids');
+        $instance['auto_exclude_filter'] = $this->get_bool($new_instance, 'auto_exclude_filter', true);
+        $instance['exclude_tag_ids'] =  $this->get_str_as_int_array($new_instance, 'exclude_tag_ids_str');
 
         return $instance;
     }
