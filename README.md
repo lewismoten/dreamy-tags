@@ -1,46 +1,53 @@
 # Dreamy Tags
 
 ![alt Dreamy Tags Banner](dreamy-tags/assets/banner-640×320.jpg)
-
 ![alt Dreamy Tags Icon](dreamy-tags/assets/icon-128x128.png)
 
-The Dreamy Tags plug-in will allow you to display a tag cloud that filters based on category and tags. You can use Short Code or Gutenberg Code Blocks.
+Dreamy Tags allows you to display a tag cloud filtered by categories and tags. It can be used via **shortcodes** or **Block Editor blocks**.
 
-# Short Code
+## Shortcode
 
-`[dreamy_tags cat="786439348" tags="786439775" exclude="786439762,786439759" auto_exclude="true" min_count="5"]`
+```text
+[dreamy_tags cat="786439348" tags="786439775" exclude="786439762,786439759" auto_exclude="true" min_count="5"]
+```
 
-All arguments are optional. `cat`, `tags`, and `exclude` are comma-delimited.
+All arguments are optional. 
+`cat`, `tags`, and `exclude` expect numeric term IDs and are comma-delimited.
 
-* cat - the category id's that posts must have at least one
-* tags - the tag id's that a post must have at least one
-* exclude - tag id's that should be excluded from the cloud
-* auto_exclude (boolean [true]) - indicates filtered tags should be excluded from the cloud
-* min_count - (number [1]) - Minimum number of occurences tag must appear on a post filtered by cat & tags.
+* `cat` - Category IDs a post must belong to (at least one)
+* `tags` - Tag IDs a post must belong to (at least one)
+* `exclude` - Tag IDs excluded from the cloud
+* `auto_exclude` (boolean, default: true) - Excludes filter tags from the cloud
+* `min_count` - (number, default: 1) - Minimum number of occurences a tag must appear in filtered posts
 
-# Code Blocks
+# Block Editor
 
 ![alt Dreamy Tags Example](dreamy-tags/assets/block-settings.png)
 
-The code block settings map to the short code.
+Block settings map directly to the shortcode options:
 
-* Filter Categories - A post must be in one of these categories
-* Filter Tags - A post must have one of these tags
-* Exclude Tags - The following tags will not appear in the cloud
-* auto-exclude filtered tags - The filter tags will not appear in the cloud
-* Minimum posts per tag - A tag must appear this many times in the filtered posts before it appears
+* **Filter Categories** - Post must belong to one of these categories
+* **Filter Tags** - Post must have one of these tags
+* **Exclude Tags** - Tags that will not appear in the cloud
+* **auto-exclude filtered tags** - Filter tags will not appear in the cloud
+* **Minimum posts per tag** - Required number of appearances before a tag is shown
 
 ## Build
 1. Open Terminal.
-2. Navigate to your project folder (type `cd` and drag the folder in).
-3. Run this command to make the script executable: `chmod +x build.sh`
-4. Execute the script `./build.sh -c "Building plugin myself"`
-5. Upload the `dreamy-tags-v#.#.#.zip` to your wordpress plugin dashboard.
+2. Navigate to your project folder
+3. Make the build script executable `chmod +x build.sh`
+4. Build the plugin `./build.sh -c "Building plugin myself"`
+5. Upload the generated `dreamy-tags-v#.#.#.zip` to WordPress
 
 ### Stable Build
 
-To mark a stable release, pass the `-s` or `--stable` argument along with `-c` changes meant for user-impacting changes. If nothing is impacting the following command will suffice.
+To mark a release as stable, pass `-s` or `--stable` along with `-c` entries describing user-impacting changes.
 
-`./build.sh -s -c "No functional changes. Safe to update."`
+If there are no functional changes, this is sufficient:
 
-The dreamy-tags/readme.txt file will update the Stable Tag with the current version in `version.txt`, and add a new entry under `== Upgrade Notice ==` for the current version. Multiple `-c` changes are supported, but they will be delimited with semicolons.
+```bash
+./build.sh -s -c "No functional changes. Safe to update."
+```
+
+This updates the Stable tag in `dreamy-tags/readme.txt` using the version in `version.txt` and adds an entry under `== Upgrade Notice ==`.
+Multiple `-c` entries are supported and will be joined with semicolons.
