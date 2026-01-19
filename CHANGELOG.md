@@ -28,3 +28,6 @@
 ## 1.0.46 - 2026-01-19
 - Include license
 
+## 1.0.48 - 2026-01-19
+- additional PHPCS report
+
