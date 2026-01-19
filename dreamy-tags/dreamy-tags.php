@@ -2,15 +2,15 @@
 /**
  * Plugin Name:       Dreamy Tags
  * Plugin URI:        https://github.com/lewismoten/dreamy-tags
- * Description:       Generates a tag cloud filtered by categories/tags with exclusion logic.
- * Version:           1.0.46
+ * Description:       A specialized tag cloud generator designed for blogs, archives, and taxonomy-based layouts. Dreamy Tags allows you to filter displayed tags by category, exclude organizational tags, and control minimum usage thresholds for cleaner, more meaningful tag clouds.
+ * Version:           1.0.47
  * Author:            Lewis Moten
  * Author URI:        https://lewismoten.com/
- * License:           GPL v2 or later
+ * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       dreamy-tags
- * Requires at least: 6.9
- * Requires PHP:      8.2
+ * Requires at least: 6.4
+ * Requires PHP:      7.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

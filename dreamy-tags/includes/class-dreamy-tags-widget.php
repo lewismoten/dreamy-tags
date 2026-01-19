@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Dreamy Tags
- * Description: Generates a tag cloud filtered by category and specific tags, with exclusion logic.
- * Version: 1.0.46
+ * Description: A specialized tag cloud generator designed for blogs, archives, and taxonomy-based layouts. Dreamy Tags allows you to filter displayed tags by category, exclude organizational tags, and control minimum usage thresholds for cleaner, more meaningful tag clouds.
+ * Version: 1.0.47
  * Author: Lewis Moten
  */
 
