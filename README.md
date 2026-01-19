@@ -18,9 +18,9 @@ All arguments are optional.
 * `tags` - Tag IDs a post must belong to (at least one)
 * `exclude` - Tag IDs excluded from the cloud
 * `auto_exclude` (boolean, default: true) - Excludes filter tags from the cloud
-* `min_count` - (number, default: 1) - Minimum number of occurences a tag must appear in filtered posts
+* `min_count` - (number, default: 1) - Minimum number of occurrences a tag must appear across the filtered posts
 
-# Block Editor
+## Block Editor
 
 ![alt Dreamy Tags Example](dreamy-tags/assets/block-settings.png)
 
@@ -29,7 +29,7 @@ Block settings map directly to the shortcode options:
 * **Filter Categories** - Post must belong to one of these categories
 * **Filter Tags** - Post must have one of these tags
 * **Exclude Tags** - Tags that will not appear in the cloud
-* **auto-exclude filtered tags** - Filter tags will not appear in the cloud
+* **Auto-exclude filtered tags** - Filter tags will not appear in the cloud
 * **Minimum posts per tag** - Required number of appearances before a tag is shown
 
 ## Build
@@ -37,17 +37,17 @@ Block settings map directly to the shortcode options:
 2. Navigate to your project folder
 3. Make the build script executable `chmod +x build.sh`
 4. Build the plugin `./build.sh --build-only`
-5. Upload the generated `dreamy-tags-v1.0.40.zip` to WordPress
+5. Upload the generated `dreamy-tags-vX.Y.Z.zip` to WordPress
 
 ### Version Bump
-During debelopment, it is encouraged to bump the version with each build and append the changelog. This is done by calling the build script with `-c` change tags. 
+During development, it is encouraged to bump the version with each build and append the changelog. This is done by calling the build script with `-c` change tags. 
 
 Multiple change tags can be defined. At least one change is required, and must be between 8-60 characters each.
 
 In turn, this will update `CHANGELOG.md` and `dreamy-tags/readme.txt` with the changes. The version's patch number will be incremented, and updated in `readme.txt`, `dreamy-tags.php`, `block.json`
 
 ```bash
-./build.sh -c "Updated documentation" -c "Fixed spelling of 'occurences'"
+./build.sh -c "Updated documentation" -c "Fixed spelling of 'occurrences'"
 ```
 
 ### Stable Build
