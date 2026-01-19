@@ -3,7 +3,7 @@
  * Plugin Name:       Dreamy Tags
  * Plugin URI:        https://github.com/lewismoten/dreamy-tags
  * Description:       Generates a tag cloud filtered by categories/tags with exclusion logic.
- * Version:           1.0.40
+ * Version:           1.0.42
  * Author:            Lewis Moten
  * Author URI:        https://lewismoten.com/
  * License:           GPLv2
@@ -25,6 +25,7 @@ add_action( 'widgets_init', 'register_lewismoten_dreamy_tags_widget' );
 function lewismoten_dreamy_tags_shortcode($atts) {
     $a = shortcode_atts(array(
         'cat' => '',
+        'children' => false,
         'tags' =>  '',
         'exclude'  => '',
         'auto_exclude' => true,
@@ -42,14 +43,20 @@ function lewismoten_dreamy_tags_shortcode($atts) {
         $a['auto_exclude'] = true;
     }
 
+    $a['children'] = filter_var( $a['children'], FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE );
+    if ( $a['children'] === null ) {
+        $a['children'] = true;
+    }
+
     ob_start();
     if(class_exists('Dreamy_Tags_Widget')) {
         the_widget('Dreamy_Tags_Widget', array(
             'filter_category_ids' => $cat_array,
+            'children'            => $a['children'],
             'filter_tag_ids'      => $tag_array,
             'exclude_tag_ids'     => $exclude_array,
             'auto_exclude_filter' => $a['auto_exclude'],
-            'min_count' => $a['min_count'],
+            'min_count'           => $a['min_count'],
         ));
     }
     return ob_get_clean();
@@ -116,5 +123,28 @@ function lewismoten_dreamy_tags_assets() {
         array(),
         $version
     );
+    wp_regsiter_script(
+        'dreamy-tags-block-editor',
+        plugins_url('plock.js', __FILE__),
+        array(
+            'wp-blocks',
+            'wp-element',
+            'wp-block-editor',
+            'wp-components',
+            'wp-data',
+            'wp-core-data',
+            'wp-server-side-render',
+        ),
+        $version,
+        true
+    )
+    wp_localize_script(
+        'dreamy-tags-block-editor',
+        'DreamyTagsBlock',
+        array(
+            'previewImage' => plugins_url( 'assets/block-preview.png', __FILE__ ),
+        )
+    );
+    wp_enqueue_script( 'dreamy-tags-block-editor' );
 }
 add_action( 'enqueue_block_editor_assets', 'lewismoten_dreamy_tags_assets' );

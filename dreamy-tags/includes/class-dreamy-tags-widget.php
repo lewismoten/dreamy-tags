@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Dreamy Tags
  * Description: Generates a tag cloud filtered by category and specific tags, with exclusion logic.
- * Version: 1.0.40
+ * Version: 1.0.42
  * Author: Lewis Moten
  */
 
@@ -43,18 +43,39 @@ class Dreamy_Tags_Widget extends WP_Widget {
             'no_found_rows'  => true,
         );
 
+        $tax_query = array();
+
         if ( ! empty( $instance['filter_category_ids'] ) ) {
-            $post_args['category__in'] = array_map( 'intval', (array) $instance['filter_category_ids'] );
+            $tax_query[] = array(
+                'taxonomy'         => 'category',
+                'field'            => 'term_id',
+                'terms'            => array_map( 'intval', (array) $instance['filter_category_ids'] ),
+                'include_children' => ! empty( $instance['children'] ),
+                'operator'         => 'IN',
+            );
         }
 
         if ( ! empty( $instance['filter_tag_ids'] ) ) {
-            $post_args['tag__in'] = array_map( 'intval', (array) $instance['filter_tag_ids'] );
+            $tax_query[] = array(
+                'taxonomy' => 'post_tag',
+                'field'    => 'term_id',
+                'terms'    => array_map( 'intval', (array) $instance['filter_tag_ids'] ),
+                'operator' => 'IN',
+            );
+        }
+
+        if ( count( $tax_query ) > 1 ) {
+            array_unshift( $tax_query, array( 'relation' => 'AND' ) );
+        }
+
+        if ( ! empty( $tax_query ) ) {
+            $post_args['tax_query'] = $tax_query;
         }
 
         $filtered_post_ids = get_posts( $post_args );
 
         if ( empty( $filtered_post_ids ) ) {
-            echo "<p>$no_tags_found</p>";
+            $this->paragraph($no_tags_found);
             echo $args['after_widget'];
             return;
         }
@@ -87,7 +108,7 @@ class Dreamy_Tags_Widget extends WP_Widget {
         );
 
         if ( empty( $kept_tag_ids ) ) {
-            echo "<p>$no_tags_found</p>";
+            $this->paragraph($no_tags_found);
             echo $args['after_widget'];
             return;
         }
@@ -99,7 +120,7 @@ class Dreamy_Tags_Widget extends WP_Widget {
         ) );
 
         if ( empty( $tags_in_use ) || is_wp_error( $tags_in_use ) ) {
-            echo "<p>$no_tags_found</p>";
+            $this->paragraph($no_tags_found);
             echo $args['after_widget'];
             return;
         }
@@ -120,12 +141,14 @@ class Dreamy_Tags_Widget extends WP_Widget {
                 'tag_counts' => $tag_counts
             ) );
         } else {
-            echo "<p>$no_tags_found</p>";
+            $this->paragraph($no_tags_found);
         }
 
         echo $args['after_widget'];
     }
-
+    private function paragraph($txt) {
+        echo '<p>'.esc_html($txt).'</p>';
+    }
     public function dreamy_tags_cloud($a) {
         $min_font = $a['min_font'];
         $max_font = $a['max_font'];
@@ -133,7 +156,7 @@ class Dreamy_Tags_Widget extends WP_Widget {
 
         $subset_counts = array_intersect_key($a['tag_counts'], array_flip($a['include']));
         if (empty($subset_counts)) {
-            echo "<p>$no_tags_found</p>";
+            $this->paragraph($no_tags_found);
             return;
         }
 
@@ -149,7 +172,7 @@ class Dreamy_Tags_Widget extends WP_Widget {
             'hide_empty' => false,
         ]);
         if (empty($terms) || is_wp_error($terms)) {
-            echo "<p>$no_tags_found</p>";
+            $this->paragraph($no_tags_found);
             return;
         }
 
@@ -189,6 +212,7 @@ class Dreamy_Tags_Widget extends WP_Widget {
         $exclude_tag_ids = ! empty( $instance['exclude_tag_ids'] ) ? (array) $instance['exclude_tag_ids'] : array();
 
         $auto_exclude  = isset( $instance['auto_exclude_filter'] ) ? (bool) $instance['auto_exclude_filter'] : true;
+        $children  = isset( $instance['children'] ) ? (bool) $instance['children'] : true;
         ?>
 
         <p>
@@ -218,6 +242,15 @@ class Dreamy_Tags_Widget extends WP_Widget {
                 }
                 ?>
             </select>
+        </p>
+
+        <p>
+            <input class="checkbox"
+                   type="checkbox"
+                   <?php checked( $children ); ?>
+                   id="<?php echo esc_attr( $this->get_field_id( 'children' ) ); ?>"
+                   name="<?php echo esc_attr( $this->get_field_name( 'children' ) ); ?>" />
+            <label for="<?php echo esc_attr( $this->get_field_id( 'children' ) ); ?>">Include posts in child categories</label>
         </p>
 
         <p>
@@ -268,7 +301,11 @@ class Dreamy_Tags_Widget extends WP_Widget {
             ? array_map( 'intval', (array) $new_instance['filter_category_ids'] )
             : array();
 
-        $instance['filter_tag_ids'] = ( ! empty( $new_instance['filter_tag_ids'] ) )
+        $instance['children'] = isset( $new_instance['children'] )
+            ? (bool) $new_instance['children']
+            : true;
+
+            $instance['filter_tag_ids'] = ( ! empty( $new_instance['filter_tag_ids'] ) )
             ? array_map( 'intval', (array) $new_instance['filter_tag_ids'] )
             : array();
 

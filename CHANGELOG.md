@@ -10,4 +10,9 @@
 
 ## 1.0.40 - 2026-01-19
 - stop injecting two lines after last changelog item in readme
+## 1.0.41 - 2026-01-19
+- Toggle to include child categories
+
+## 1.0.42 - 2026-01-19
+- Add block preview image
 

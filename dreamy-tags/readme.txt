@@ -31,6 +31,12 @@ Initial WordPress.org release.
 
 == Changelog ==
 
+= 1.0.42 =
+* Add block preview image
+
+= 1.0.41 =
+* Toggle to include child categories
+
 = 1.0.40 =
 * stop injecting two lines after last changelog item in readme
 

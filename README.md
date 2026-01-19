@@ -10,13 +10,14 @@ Dreamy Tags allows you to display a tag cloud filtered by categories and tags. I
 ## Shortcode
 
 ```text
-[dreamy_tags cat="786439348" tags="786439775" exclude="786439762,786439759" auto_exclude="true" min_count="5"]
+[dreamy_tags cat="786439348" children="true" tags="786439775" exclude="786439762,786439759" auto_exclude="true" min_count="5"]
 ```
 
 All arguments are optional. 
 `cat`, `tags`, and `exclude` expect numeric term IDs and are comma-delimited.
 
 * `cat` - Category IDs a post must belong to (at least one)
+* `children` - (boolean, default: true) - Include posts in child categories
 * `tags` - Tag IDs a post must belong to (at least one)
 * `exclude` - Tag IDs excluded from the cloud
 * `auto_exclude` (boolean, default: true) - Excludes filter tags from the cloud
@@ -29,6 +30,7 @@ All arguments are optional.
 Block settings map directly to the shortcode options:
 
 * **Filter Categories** - Post must belong to one of these categories
+* **Include Children** - Posts in child-categories will be included
 * **Filter Tags** - Post must have one of these tags
 * **Exclude Tags** - Tags that will not appear in the cloud
 * **Auto-exclude filtered tags** - Filter tags will not appear in the cloud

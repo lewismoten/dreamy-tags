@@ -57,9 +57,21 @@
     lineHeight: "18px"
   };
 
+  const previewImage = window.DreamyTagsBlock?.previewImage;
+
   registerBlockType(typeName, {
     edit: (props) => {
-      const attrs = props.attributes || {};
+      const {isPreview, ...attrs} = props.attributes || {};
+      if ( isPreview && previewImage ) {
+        return el("div", useBlockProps(), 
+          el("img", {
+            src: previewImage,
+            alt: "Dreamy Tags block preview",
+            style: { width: "100%", height: "auto", display: "block" }
+          })
+        );
+      }
+
       const blockProps = useBlockProps({ className: `${pluginName}-editor` });
 
       const [catSearch, setCatSearch] = useState("");
@@ -291,6 +303,12 @@
                 })
                 : el("span", { style: { opacity: 0.7 } }, "No categories selected yet.")
             ),
+
+            el(ToggleControl, {
+              label: "Include posts in child categories",
+              checked: !!attrs.children,
+              onChange: (v) => props.setAttributes({ children: v })
+            }),
 
             // Filter Tags picker
             el(ComboboxControl, {
