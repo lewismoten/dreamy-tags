@@ -7,6 +7,7 @@ Requires PHP: 7.4
 Stable tag: 1.0.47
 License: GPLv2 or later
 
+Dreamy Tags displays a customizable tag cloud filtered by categories and tags for clean, meaningful blog and archive navigation.
 
 == Screenshots ==
 1. Block editor settings for Dreamy Tags.
