@@ -1,9 +1,11 @@
 # Dreamy Tags
 
-![alt Dreamy Tags Banner](dreamy-tags/assets/banner-640×320.jpg)
+![alt Dreamy Tags Banner](dreamy-tags/assets/banner-772x250.png)
 ![alt Dreamy Tags Icon](dreamy-tags/assets/icon-128x128.png)
 
 Dreamy Tags allows you to display a tag cloud filtered by categories and tags. It can be used via **shortcodes** or **Block Editor blocks**.
+
+![alt Dreamy Tags Example of filtered tag cloud output](dreamy-tags/assets/screenshot-2.png)
 
 ## Shortcode
 
@@ -22,7 +24,7 @@ All arguments are optional.
 
 ## Block Editor
 
-![alt Dreamy Tags Example](dreamy-tags/assets/block-settings.png)
+![alt Dreamy Tags Block Editor Settings](dreamy-tags/assets/screenshot-1.png)
 
 Block settings map directly to the shortcode options:
 

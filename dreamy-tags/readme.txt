@@ -6,6 +6,10 @@ Tested up to: 6.9
 Stable tag: 1.0.40
 License: GPLv2
 
+== Screenshots ==
+1. Block editor settings for Dreamy Tags.
+2. Example of a filtered tag cloud output.
+
 == Description ==
 A specialized tag cloud generator designed for archive and taxonomy views. It allows you to filter tags based on specific categories while excluding the "organizational" tags from the cloud visual.
 
