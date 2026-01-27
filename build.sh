@@ -256,6 +256,7 @@ ZIP_NAME="${PLUGIN_DIR}-v${VERSION}.zip"
 cd "$BUILD_DIR"
 zip -rX9 "../$ZIP_NAME" "$PLUGIN_DIR" \
  -x "$PLUGIN_DIR/assets/*" \
+ -x "$PLUGIN_DIR/images/dreamy-tag.svg" \
  -x "*.DS_Store" \
  -x "__MACOSX" \
  -x "*/.DS_Store"
