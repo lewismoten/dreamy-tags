@@ -55,6 +55,9 @@ Initial WordPress.org release.
 
 == Changelog ==
 
+= 1.0.68 =
+* fix next warnings for UI controls (#8)
+
 = 1.0.67 =
 * fix warning for ComboBox size (#8)
 

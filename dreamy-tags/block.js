@@ -324,7 +324,8 @@
               value: null,
               onFilterValueChange: (input) => setCatSearch(input || ""),
               onChange: (catId) => addCat(catId),
-              __next40pxDefaultSize: true
+              __next40pxDefaultSize: true,
+              __nextHasNoMarginBottom: true,
             }),
 
             // Category chips (inline/wrapping)
@@ -372,7 +373,8 @@
               value: null,
               onFilterValueChange: (input) => setTagSearch(input || ""),
               onChange: (tagId) => addTag(tagId),
-              __next40pxDefaultSize: true
+              __next40pxDefaultSize: true,
+              __nextHasNoMarginBottom: true,
             }),
 
             // Filter tag chips
@@ -420,7 +422,8 @@
               value: null,
               onFilterValueChange: (input) => setExcludeSearch(input || ""),
               onChange: (tagId) => addExcludeTag(tagId),
-              __next40pxDefaultSize: true
+              __next40pxDefaultSize: true,
+              __nextHasNoMarginBottom: true,
             }),
 
             // Exclude tag chips
@@ -460,7 +463,9 @@
               min: 1,
               max: 50,
               value: Number.isFinite(attrs.min_count) ? attrs.min_count : 2,
-              onChange: (v) => props.setAttributes({ min_count: v || 2 })
+              onChange: (v) => props.setAttributes({ min_count: v || 2 }),
+              __next40pxDefaultSize: true,
+              __nextHasNoMarginBottom: true,
             })
           )
         ),
