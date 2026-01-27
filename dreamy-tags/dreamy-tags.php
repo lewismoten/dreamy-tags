@@ -151,8 +151,3 @@ function lewismoten_dreamy_tags_assets() {
     wp_enqueue_script($name);
 }
 add_action( 'enqueue_block_editor_assets', 'lewismoten_dreamy_tags_assets' );
-
-add_action( 'init', 'lewismoten_dreamy_tags_load_textdomain' );
-function lewismoten_dreamy_tags_load_textdomain() {
-    load_plugin_textdomain( 'dreamy-tags', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-}
