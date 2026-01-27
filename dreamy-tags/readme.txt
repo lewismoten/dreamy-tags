@@ -55,6 +55,9 @@ Initial WordPress.org release.
 
 == Changelog ==
 
+= 1.0.66 =
+* remove dupe/alt style loading (#8)
+
 = 1.0.65 =
 * use createElement alias (#8)
 

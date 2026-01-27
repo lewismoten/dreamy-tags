@@ -79,3 +79,6 @@
 ## 1.0.65 - 2026-01-27
 - use createElement alias (#8)
 
+## 1.0.66 - 2026-01-27
+- remove dupe/alt style loading (#8)
+
