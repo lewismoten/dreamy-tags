@@ -88,3 +88,6 @@
 ## 1.0.68 - 2026-01-27
 - fix next warnings for UI controls (#8)
 
+## 1.0.69 - 2026-01-27
+- fix next warnings for Toggle control (#8)
+

@@ -362,7 +362,8 @@
             el(ToggleControl, {
               label: "Include posts in child categories",
               checked: !!attrs.children,
-              onChange: (v) => props.setAttributes({ children: v })
+              onChange: (v) => props.setAttributes({ children: v }),
+              __nextHasNoMarginBottom: true,
             }),
 
             // Filter Tags picker
