@@ -33,12 +33,12 @@ Build instructions are documented in the repository README.
 
 == Developer Notes ==
 Developers may adjust the maximum number of posts scanned by the block
-using the `dreamy_tags_max_posts` filter.
+using the `lewismoten_dreamy_tags_max_posts` filter.
 
 Default: 2000
 
 Example:
-add_filter( 'dreamy_tags_max_posts', function () {
+add_filter( 'lewismoten_dreamy_tags_max_posts', function () {
     return 10000;
 });
 
@@ -54,6 +54,9 @@ All artwork and icons included with this plugin were created by the author and a
 Initial WordPress.org release.
 
 == Changelog ==
+
+= 1.0.54 =
+* consolidate unique prefix (#8)
 
 = 1.0.53 =
 * use wp_enqueue commands for styles (#8)

@@ -14,7 +14,7 @@
     display: none !important;
 }
 
-.widget_dreamy_tags_widget .dreamy-tags a {
+.lewismoten_dreamy_tags_widget .lewismoten-dreamy-tags a {
     display: inline-block;
     margin: 4px;
     padding: 6px 12px;
@@ -32,20 +32,20 @@
   cursor: default;
   text-decoration: underline;
 }
-.widget_dreamy_tags_widget .dreamy-tags a:hover {
+.lewismoten_dreamy_tags_widget .lewismoten-dreamy-tags a:hover {
     background: #a5d6a7;
     color: #ffffff !important;
     box-shadow: 0 0 15px rgba(165, 214, 167, 0.6);
     transform: translateY(-2px);
 }
 
-.widget_dreamy_tags_widget .dreamy-tags a {
+.lewismoten_dreamy_tags_widget .lewismoten-dreamy-tags a {
     line-height: 1.2;
 }
-.editor-styles-wrapper .dreamy-tags-block {
+.editor-styles-wrapper .lewismoten-dreamy-tags-block {
   padding: 8px;
   min-height: 32px;
 }
-.editor-styles-wrapper .dreamy-tags-preview a {
+.editor-styles-wrapper .lewismoten-dreamy-tags-preview a {
   pointer-events: none;
 }

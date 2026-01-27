@@ -39,12 +39,12 @@ Block settings map directly to the shortcode options:
 ## Performance
 
 Developers may adjust the maximum number of posts scanned by the block
-using the `dreamy_tags_max_posts` filter.
+using the `lewismoten_dreamy_tags_max_posts` filter.
 
 Default: 2000
 
 ```php
-add_filter( 'dreamy_tags_max_posts', function () {
+add_filter( 'lewismoten_dreamy_tags_max_posts', function () {
     return 10000;
 });
 ```

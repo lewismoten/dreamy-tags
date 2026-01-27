@@ -43,3 +43,6 @@
 ## 1.0.53 - 2026-01-27
 - use wp_enqueue commands for styles (#8)
 
+## 1.0.54 - 2026-01-27
+- consolidate unique prefix (#8)
+

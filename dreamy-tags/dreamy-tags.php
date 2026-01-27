@@ -3,7 +3,7 @@
  * Plugin Name:       Dreamy Tags
  * Plugin URI:        https://github.com/lewismoten/dreamy-tags
  * Description:       A specialized tag cloud generator designed for blogs, archives, and taxonomy-based layouts. Dreamy Tags allows you to filter displayed tags by category, exclude organizational tags, and control minimum usage thresholds for cleaner, more meaningful tag clouds.
- * Version:           1.0.53
+ * Version:           1.0.54
  * Author:            Lewis Moten
  * Author URI:        https://lewismoten.com/
  * License:           GPLv2 or later
@@ -18,10 +18,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 // Include the widget class
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-dreamy-tags-widget.php';
 
-function register_lewismoten_dreamy_tags_widget() {
-    register_widget( 'Dreamy_Tags_Widget' );
+function lewismoten_dreamy_tags_register_widget() {
+    register_widget( 'LewismotenDreamyTagsWidget' );
 }
-add_action( 'widgets_init', 'register_lewismoten_dreamy_tags_widget' );
+add_action( 'widgets_init', 'lewismoten_dreamy_tags_register_widget' );
 
 function lewismoten_dreamy_tags_shortcode($atts) {
     $a = shortcode_atts(array(
@@ -50,8 +50,8 @@ function lewismoten_dreamy_tags_shortcode($atts) {
     }
 
     ob_start();
-    if(class_exists('Dreamy_Tags_Widget')) {
-        the_widget('Dreamy_Tags_Widget', array(
+    if(class_exists('LewismotenDreamyTagsWidget')) {
+        the_widget('LewismotenDreamyTagsWidget', array(
             'filter_category_ids' => $cat_array,
             'children'            => $a['children'],
             'filter_tag_ids'      => $tag_array,
@@ -64,7 +64,7 @@ function lewismoten_dreamy_tags_shortcode($atts) {
 }
 add_shortcode('dreamy_tags', 'lewismoten_dreamy_tags_shortcode');
 
-function lewismoten_flat_ids(&$a, $key) {
+function lewismoten_dreamy_tags_flat_ids(&$a, $key) {
     if ( isset( $a[ $key ] ) && is_array( $a[ $key ] ) ) {
         $a[ $key ] = implode(
             ',',
@@ -82,9 +82,9 @@ function lewismoten_flat_ids(&$a, $key) {
 }
 function lewismoten_dreamy_tags_block_render( $attributes, $content = '', $block = null ) {
     $attributes = is_array( $attributes ) ? $attributes : array();
-    lewismoten_flat_ids($attributes, 'cat');
-    lewismoten_flat_ids($attributes, 'tags');
-    lewismoten_flat_ids($attributes, 'exclude_tags');
+    lewismoten_dreamy_tags_flat_ids($attributes, 'cat');
+    lewismoten_dreamy_tags_flat_ids($attributes, 'tags');
+    lewismoten_dreamy_tags_flat_ids($attributes, 'exclude_tags');
 
     $html = lewismoten_dreamy_tags_shortcode( $attributes );
     if ( is_admin() ) {
@@ -92,28 +92,28 @@ function lewismoten_dreamy_tags_block_render( $attributes, $content = '', $block
     }
     return $html;
 }
-function register_lewismoten_dreamy_tags_block() {
+function lewismoten_dreamy_tags_register_block_render() {
     register_block_type( __DIR__, array(
         'render_callback' => 'lewismoten_dreamy_tags_block_render',
     ) );
 }
-add_action( 'init', 'register_lewismoten_dreamy_tags_block' );
+add_action( 'init', 'lewismoten_dreamy_tags_register_block_render' );
 
 function lewismoten_dreamy_tags_styles() {
     wp_register_style('lewismoten_dreamy_tags_styles', false);
     wp_enqueue_style('lewismoten_dreamy_tags_styles');
-    wp_add_inline_style('lewismoten_dreamy_tags_styles', '
-        .dreamy-tags a { 
+    wp_add_inline_style('lewismoten_dreamy_tags_styles', "
+        .lewismoten-dreamy-tags a { 
             display: inline-block; margin: 4px; padding: 6px 12px;
             background: rgba(144, 238, 144, 0.1); color: #2e7d32 !important;
             border: 1px solid #a5d6a7; border-radius: 20px; text-decoration: none;
             transition: all 0.3s ease;
         }
-        .dreamy-tags a:hover { 
+        .lewismoten-dreamy-tags a:hover { 
             background: #a5d6a7; color: #fff !important;
             box-shadow: 0 0 15px rgba(165, 214, 167, 0.6); transform: translateY(-2px);
         }
-    ');
+    ");
 }
 add_action('wp_head', 'lewismoten_dreamy_tags_styles');
 
@@ -124,15 +124,17 @@ function lewismoten_dreamy_tags_assets() {
     $plugin_data = get_plugin_data( __FILE__ );
     $version     = isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : null;
 
+    $name = 'lewismoten_dreamy_tags_block_editor';
+
     wp_enqueue_style(
-        'dreamy-tags-admin-style',
+        'lewismoten_dreamy_tags_admin_style',
         plugins_url('admin/admin-style.css', __FILE__),
         array(),
         $version
     );
 
     wp_register_script(
-        'dreamy-tags-block-editor',
+        $name,
         plugins_url('block.js', __FILE__),
         array(
             'wp-blocks',
@@ -146,13 +148,11 @@ function lewismoten_dreamy_tags_assets() {
         $version,
         true
     );
-    wp_localize_script(
-        'dreamy-tags-block-editor',
-        'DreamyTagsBlock',
+    wp_localize_script($name, 'lewismoten_dreamy_tags_block',
         array(
             'previewImage' => plugins_url( 'assets/block-preview.png', __FILE__ ),
         )
     );
-    wp_enqueue_script( 'dreamy-tags-block-editor' );
+    wp_enqueue_script($name);
 }
 add_action( 'enqueue_block_editor_assets', 'lewismoten_dreamy_tags_assets' );

@@ -14,8 +14,6 @@
   coreData: { store: coreStore }
 }) => {
 
-  const pluginName = 'dreamy-tags';
-  const typeName = `lewismoten/${pluginName}`;
   const deleteIcon = "\u00D7"; // multiplication sign for ascii-only source file
 
   const asNumber = (value) => {
@@ -57,22 +55,22 @@
     lineHeight: "18px"
   };
 
-  const previewImage = window.DreamyTagsBlock?.previewImage;
+  const previewImage = window.lewismoten_dreamy_tags_block?.previewImage;
 
-  registerBlockType(typeName, {
+  registerBlockType('lewismoten/dreamy-tags', {
     edit: (props) => {
       const {isPreview, ...attrs} = props.attributes || {};
       if ( isPreview && previewImage ) {
         return el("div", useBlockProps(), 
           el("img", {
             src: previewImage,
-            alt: "Dreamy Tags block preview",
+            alt: 'Dreamy Tags block preview',
             style: { width: "100%", height: "auto", display: "block" }
           })
         );
       }
 
-      const blockProps = useBlockProps({ className: `${pluginName}-editor` });
+      const blockProps = useBlockProps({ className: `lewismoten-dreamy-tags-editor` });
 
       const [catSearch, setCatSearch] = useState("");
       const [tagSearch, setTagSearch] = useState("");
@@ -261,7 +259,7 @@
           { key: "inspector" },
           el(
             PanelBody,
-            { title: "Dreamy Tags Settings", initialOpen: true },
+            { title: 'Dreamy Tags Settings', initialOpen: true },
 
             // Categories picker
             el(ComboboxControl, {
@@ -411,10 +409,10 @@
 
         el(
           "div",
-          { className: `${pluginName}-preview`, style: { marginTop: "8px" } },
+          { className: `lewismoten-dreamy-tags-preview`, style: { marginTop: "8px" } },
           el(serverSideRender, {
             key: "preview",
-            block: typeName,
+            block: 'lewismoten/dreamy-tags',
             attributes: attrs
           })
         )
