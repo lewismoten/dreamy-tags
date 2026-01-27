@@ -55,6 +55,9 @@ Initial WordPress.org release.
 
 == Changelog ==
 
+= 1.0.58 =
+* canonical header and abspath style (#8)
+
 = 1.0.57 =
 * load language for text domain (#8)
 

@@ -55,3 +55,6 @@
 ## 1.0.57 - 2026-01-27
 - load language for text domain (#8)
 
+## 1.0.58 - 2026-01-27
+- canonical header and abspath style (#8)
+

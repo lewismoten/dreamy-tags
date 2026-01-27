@@ -1,19 +1,21 @@
 <?php
 /**
- * Plugin Name:       Dreamy Tags
- * Plugin URI:        https://github.com/lewismoten/dreamy-tags
- * Description:       A specialized tag cloud generator designed for blogs, archives, and taxonomy-based layouts. Dreamy Tags allows you to filter displayed tags by category, exclude organizational tags, and control minimum usage thresholds for cleaner, more meaningful tag clouds.
- * Version:           1.0.57
- * Author:            Lewis Moten
- * Author URI:        https://lewismoten.com/
- * License:           GPLv2 or later
- * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       dreamy-tags
+ * Plugin Name: Dreamy Tags
+ * Plugin URI: https://github.com/lewismoten/dreamy-tags
+ * Description: A specialized tag cloud generator designed for blogs, archives, and taxonomy-based layouts. Dreamy Tags allows you to filter displayed tags by category, exclude organizational tags, and control minimum usage thresholds for cleaner, more meaningful tag clouds.
+ * Version: 1.0.57
+ * Author: Lewis Moten
+ * Author URI: https://lewismoten.com/
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: dreamy-tags
  * Requires at least: 6.4
- * Requires PHP:      7.4
+ * Requires PHP: 7.4
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 
 // Include the widget class
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-dreamy-tags-widget.php';
