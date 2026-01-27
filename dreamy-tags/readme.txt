@@ -55,6 +55,9 @@ Initial WordPress.org release.
 
 == Changelog ==
 
+= 1.0.70 =
+* fix second Toggle control warning (#8)
+
 = 1.0.69 =
 * fix next warnings for Toggle control (#8)
 

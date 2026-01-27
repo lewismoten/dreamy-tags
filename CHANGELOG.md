@@ -91,3 +91,6 @@
 ## 1.0.69 - 2026-01-27
 - fix next warnings for Toggle control (#8)
 
+## 1.0.70 - 2026-01-27
+- fix second Toggle control warning (#8)
+

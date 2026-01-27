@@ -412,7 +412,8 @@
             el(ToggleControl, {
               label: "Auto-exclude filtered tags",
               checked: !!attrs.auto_exclude,
-              onChange: (v) => props.setAttributes({ auto_exclude: v })
+              onChange: (v) => props.setAttributes({ auto_exclude: v }),
+              __nextHasNoMarginBottom: true,
             }),
 
             // Exclude Tags picker
