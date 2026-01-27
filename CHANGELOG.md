@@ -94,3 +94,6 @@
 ## 1.0.70 - 2026-01-27
 - fix second Toggle control warning (#8)
 
+## 1.0.71 - 2026-01-27
+- bring back svg icon (#8)
+

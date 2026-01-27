@@ -55,6 +55,9 @@ Initial WordPress.org release.
 
 == Changelog ==
 
+= 1.0.71 =
+* bring back svg icon (#8)
+
 = 1.0.70 =
 * fix second Toggle control warning (#8)
 
