@@ -55,6 +55,9 @@ Initial WordPress.org release.
 
 == Changelog ==
 
+= 1.0.67 =
+* fix warning for ComboBox size (#8)
+
 = 1.0.66 =
 * remove dupe/alt style loading (#8)
 

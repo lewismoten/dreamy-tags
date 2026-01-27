@@ -323,7 +323,8 @@
               options: catOptions,
               value: null,
               onFilterValueChange: (input) => setCatSearch(input || ""),
-              onChange: (catId) => addCat(catId)
+              onChange: (catId) => addCat(catId),
+              __next40pxDefaultSize: true
             }),
 
             // Category chips (inline/wrapping)
@@ -370,7 +371,8 @@
               options: tagOptions,
               value: null,
               onFilterValueChange: (input) => setTagSearch(input || ""),
-              onChange: (tagId) => addTag(tagId)
+              onChange: (tagId) => addTag(tagId),
+              __next40pxDefaultSize: true
             }),
 
             // Filter tag chips
@@ -417,7 +419,8 @@
               options: excludeOptions,
               value: null,
               onFilterValueChange: (input) => setExcludeSearch(input || ""),
-              onChange: (tagId) => addExcludeTag(tagId)
+              onChange: (tagId) => addExcludeTag(tagId),
+              __next40pxDefaultSize: true
             }),
 
             // Exclude tag chips
