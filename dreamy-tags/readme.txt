@@ -58,6 +58,9 @@ Initial WordPress.org release.
 
 == Changelog ==
 
+= 1.0.74 =
+* Plugin Check Warnings (#8)
+
 = 1.0.73 =
 * Addressed plugin reviewer feedback.
 * Improved block editor compatibility with upcoming WordPress versions.

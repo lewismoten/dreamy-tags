@@ -103,3 +103,6 @@
 ## 1.0.73 - 2026-01-27
 - revert svg in block logic (#8)
 
+## 1.0.74 - 2026-01-27
+- Plugin Check Warnings (#8)
+
