@@ -26,7 +26,7 @@ function dreamy_tags_version() {
 }
 
 function dreamy_tags_register_widget() {
-    register_widget( 'dream_tags_widget' );
+    register_widget( 'dreamy_tags_widget' );
 }
 add_action( 'widgets_init', 'dreamy_tags_register_widget' );
 
@@ -57,8 +57,8 @@ function dreamy_tags_shortcode($atts) {
     }
 
     ob_start();
-    if(class_exists('dream_tags_widget')) {
-        the_widget('dream_tags_widget', array(
+    if(class_exists('dreamy_tags_widget')) {
+        the_widget('dreamy_tags_widget', array(
             'filter_category_ids' => $cat_array,
             'children'            => $a['children'],
             'filter_tag_ids'      => $tag_array,
