@@ -58,6 +58,9 @@ Initial WordPress.org release.
 
 == Changelog ==
 
+= 1.0.75 =
+* generic function names (#8)
+
 = 1.0.74 =
 * Addressed plugin reviewer feedback.
 * Improved block editor compatibility with upcoming WordPress versions.

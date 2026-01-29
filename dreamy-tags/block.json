@@ -12,7 +12,7 @@
         "filter",
         "taxonomy"
     ],
-    "version": "1.0.74",
+    "version": "1.0.75",
     "textdomain": "dreamy-tags",
     "icon": "tag",
     "editorStyle": "file:./admin/admin-style.css",

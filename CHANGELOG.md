@@ -106,3 +106,6 @@
 ## 1.0.74 - 2026-01-27
 - Plugin Check Warnings (#8)
 
+## 1.0.75 - 2026-01-29
+- generic function names (#8)
+
