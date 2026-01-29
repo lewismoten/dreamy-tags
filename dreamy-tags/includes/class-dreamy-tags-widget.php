@@ -236,7 +236,7 @@ class dreamy_tags_widget extends WP_Widget {
                 esc_url($term_url),
                 esc_attr((string)$tid_attr),
                 esc_attr(number_format((float)$size_attr, 2,  '.', '')),
-                esc_attr(sprintf('%s (%d)', $name, (int)$count_attr)),
+                esc_attr(sprintf('%s (%d)', wp_strip_all_tags($name), (int)$count_attr)),
                 esc_html($name)
             );
         }
