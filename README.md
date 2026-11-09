@@ -1,5 +1,7 @@
 # Dreamy Tags
 
+![Dreamy Tags social preview](docs/images/social-preview.png)
+
 ![alt Dreamy Tags Banner](dreamy-tags/assets/banner-772x250.png)
 ![alt Dreamy Tags Icon](dreamy-tags/assets/icon-128x128.png)
 
